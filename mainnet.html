@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NexaRail mainnet — status</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23ffb020'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0a0f0d;
+  --panel:#11181a;
+  --line:#1c2729;
+  --txt:#e8efeb;
+  --dim:#8b9590;
+  --ok:#00d18b;
+  --warn:#ffb020;
+  --bad:#ff5566;
+  --accent:#ffd17a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);font:14px/1.5 -apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:32px 24px 60px}
+header{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:32px}
+header h1{font-size:18px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin:0}
+header h1 span{color:var(--accent)}
+.refreshed{font-size:11px;color:var(--dim);letter-spacing:.03em}
+.refreshed b{color:var(--txt);font-weight:500}
+.grid{display:grid;gap:20px;grid-template-columns:repeat(12,1fr)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.card h2{margin:0 0 4px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:600}
+.card .big{font-size:34px;font-weight:600;letter-spacing:-.01em;margin:6px 0 2px;font-feature-settings:'tnum' 1}
+.card .sub{font-size:12px;color:var(--dim)}
+.span4{grid-column:span 4}
+.span6{grid-column:span 6}
+.span12{grid-column:span 12}
+@media (max-width:760px){.span4,.span6{grid-column:span 12}}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:middle}
+.dot.ok{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+.dot.warn{background:var(--warn);box-shadow:0 0 8px var(--warn)}
+.dot.bad{background:var(--bad);box-shadow:0 0 8px var(--bad)}
+.dot.dim{background:var(--dim)}
+table{width:100%;border-collapse:collapse;font-feature-settings:'tnum' 1}
+th,td{padding:9px 4px;text-align:left;border-bottom:1px solid var(--line);font-size:13px}
+th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:500}
+td.r,th.r{text-align:right}
+.tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;letter-spacing:.04em;border:1px solid var(--line);color:var(--dim)}
+.tag.coord{color:var(--accent);border-color:rgba(123,227,197,.3)}
+.tag.ok{color:var(--ok);border-color:rgba(0,209,139,.3)}
+.tag.jail{color:var(--bad);border-color:rgba(255,85,102,.3)}
+footer{margin-top:48px;font-size:11px;color:var(--dim);text-align:center;letter-spacing:.05em}
+footer a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--line)}
+.kbd{font-family:'SF Mono',Menlo,Consolas,monospace;font-size:11px;background:var(--panel);padding:1px 5px;border-radius:3px;border:1px solid var(--line);color:var(--dim)}
+.error{padding:14px 18px;background:rgba(255,85,102,.08);border:1px solid rgba(255,85,102,.3);border-radius:8px;color:var(--bad);font-size:13px;margin-bottom:20px;display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Nexa<span>Rail</span> — mainnet-1</h1>
+    <div class="refreshed">refreshed <b id="age">—</b> · <span id="src">—</span></div>
+  </header>
+
+  <div id="error" class="error"></div>
+
+  <div class="grid">
+    <div class="card span4">
+      <h2>Block height</h2>
+      <div class="big" id="height">—</div>
+      <div class="sub" id="block-age"><span class="dot dim"></span>—</div>
+    </div>
+    <div class="card span4">
+      <h2>Active validators</h2>
+      <div class="big" id="val-count">—</div>
+      <div class="sub" id="bonded-total">— total bonded</div>
+    </div>
+    <div class="card span4">
+      <h2>Peers connected</h2>
+      <div class="big" id="peers">—</div>
+      <div class="sub" id="catching-up"><span class="dot dim"></span>—</div>
+    </div>
+
+    <div class="card span6">
+      <h2>Validator set</h2>
+      <div style="overflow-x:auto">
+      <table id="vset">
+        <thead>
+        <tr><th>Moniker</th><th class="r">Stake</th><th class="r">Share</th><th>Class</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="card span6">
+      <h2>Jailed / unbonding</h2>
+      <div id="jailed" style="overflow-x:auto">
+        <div class="sub">—</div>
+      </div>
+
+      <h2 style="margin-top:22px">Network</h2>
+      <table>
+        <tbody>
+        <tr><td class="sub">Chain ID</td><td class="r"><span id="chain-id">—</span></td></tr>
+        <tr><td class="sub">App version</td><td class="r"><span id="app-version">—</span></td></tr>
+        <tr><td class="sub">Faucet wallet</td><td class="r"><span id="faucet">—</span></td></tr>
+        <tr><td class="sub">Last block</td><td class="r"><span id="block-time">—</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    Polls every 30s from <span class="kbd" id="endpoint">status.json</span> · operator-only quick status, not an explorer
+  </footer>
+</div>
+
+<script>
+const ENDPOINT = window.NEXARAIL_STATUS_URL || 'mainnet-status.json';
+document.getElementById('endpoint').textContent = ENDPOINT;
+document.getElementById('src').textContent = ENDPOINT.startsWith('http') ? new URL(ENDPOINT).host : ENDPOINT;
+
+function fmt(n){return new Intl.NumberFormat('en-US').format(n)}
+function fmtNxrl(unxrl){return new Intl.NumberFormat('en-US',{maximumFractionDigits:4}).format(Number(unxrl)/1_000_000)}
+function ago(iso){
+  const s = (Date.now() - new Date(iso).getTime())/1000;
+  if(s<60) return Math.round(s)+'s ago';
+  if(s<3600) return Math.round(s/60)+'m ago';
+  if(s<86400) return Math.round(s/3600)+'h ago';
+  return Math.round(s/86400)+'d ago';
+}
+function setDot(el, level){
+  el.querySelectorAll('.dot').forEach(d=>d.className='dot '+level);
+}
+function clsForMoniker(m){
+  if(m && m.startsWith('nxrl-controlled-')) return 'coord';
+  if(['NODESYNC','UTSA'].includes(m)) return 'coord';
+  return '';
+}
+
+async function refresh(){
+  try{
+    const r = await fetch(ENDPOINT + '?t=' + Date.now(), {cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const s = await r.json();
+    render(s);
+    document.getElementById('error').style.display='none';
+  }catch(e){
+    const err=document.getElementById('error');
+    err.textContent = 'Status feed unreachable: '+e.message+'  ·  endpoint '+ENDPOINT;
+    err.style.display='block';
+  }
+}
+
+function render(s){
+  // Top metrics
+  document.getElementById('height').textContent = fmt(s.height);
+  document.getElementById('val-count').textContent = s.active_validators;
+  document.getElementById('peers').textContent = s.peers;
+  document.getElementById('chain-id').textContent = s.chain_id;
+  document.getElementById('app-version').textContent = s.app_version || '—';
+  document.getElementById('faucet').textContent = fmtNxrl(s.faucet_unxrl||0) + ' NXRL';
+  document.getElementById('block-time').textContent = s.block_time ? ago(s.block_time) : '—';
+  document.getElementById('bonded-total').textContent = fmtNxrl(s.total_bonded_unxrl||0) + ' NXRL bonded';
+
+  // Block freshness
+  const blockAgeEl = document.getElementById('block-age');
+  const catchEl = document.getElementById('catching-up');
+  if(s.block_time){
+    const ageS = (Date.now() - new Date(s.block_time).getTime())/1000;
+    blockAgeEl.innerHTML = '<span class="dot '+(ageS<15?'ok':ageS<60?'warn':'bad')+'"></span>' +
+      (ageS<15?'producing':ageS<60?'slow':'stalled') + ' · ' + ago(s.block_time);
+  }
+  catchEl.innerHTML = '<span class="dot '+(s.catching_up?'warn':'ok')+'"></span>' +
+    (s.catching_up?'catching up':'in sync');
+
+  // Validators
+  const tbody = document.querySelector('#vset tbody');
+  tbody.innerHTML = '';
+  (s.validators||[]).sort((a,b)=>Number(b.tokens_unxrl)-Number(a.tokens_unxrl)).forEach(v=>{
+    const share = Number(v.tokens_unxrl)/Number(s.total_bonded_unxrl||1)*100;
+    const cls = clsForMoniker(v.moniker);
+    const tr=document.createElement('tr');
+    tr.innerHTML = '<td>'+v.moniker+'</td>'+
+      '<td class="r">'+fmtNxrl(v.tokens_unxrl)+' NXRL</td>'+
+      '<td class="r">'+share.toFixed(2)+'%</td>'+
+      '<td><span class="tag '+(cls?'coord':'ok')+'">'+(cls?'coord':'community')+'</span></td>';
+    tbody.appendChild(tr);
+  });
+
+  // Jailed
+  const j = document.getElementById('jailed');
+  const jailed = (s.jailed||[]);
+  if(!jailed.length){
+    j.innerHTML = '<div class="sub" style="padding:4px 0">No jailed validators ✓</div>';
+  } else {
+    let h = '<table><thead><tr><th>Moniker</th><th class="r">Stake</th><th>Status</th></tr></thead><tbody>';
+    jailed.forEach(v=>{
+      h += '<tr><td>'+v.moniker+'</td><td class="r">'+fmtNxrl(v.tokens_unxrl)+' NXRL</td>'+
+        '<td><span class="tag jail">'+v.status.replace('BOND_STATUS_','')+'</span></td></tr>';
+    });
+    h+='</tbody></table>';
+    j.innerHTML = h;
+  }
+
+  // Refresh label
+  document.getElementById('age').textContent = s.refreshed ? ago(s.refreshed) : 'just now';
+}
+
+refresh();
+setInterval(refresh, 30000);
+</script>
+</body>
+</html>
