@@ -1,8 +1,8 @@
 {
   "chain_id": "nexarail-testnet-1",
   "app_version": "0.37.16",
-  "height": 273874,
-  "block_time": "2026-06-20T03:58:23.424615Z",
+  "height": 273906,
+  "block_time": "2026-06-20T04:03:06.494437Z",
   "catching_up": false,
   "peers": 7,
   "active_validators": 22,
@@ -124,7 +124,7 @@
       "moniker": "NodeSafe",
       "tokens_unxrl": "990000",
       "status": "BOND_STATUS_UNBONDING",
-      "jailed": true
+      "jailed": false
     },
     {
       "moniker": "LuckyStar",
@@ -134,5 +134,5 @@
     }
   ],
   "faucet_unxrl": "21941213",
-  "refreshed": "2026-06-20T03:59:25.915264Z"
+  "refreshed": "2026-06-20T04:04:10.759009Z"
 }
