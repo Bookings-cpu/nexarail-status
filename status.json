@@ -1,14 +1,137 @@
 {
   "chain_id": "nexarail-testnet-1",
   "app_version": "0.37.16",
-  "height": 276182,
-  "block_time": "2026-06-20T10:32:31.146291Z",
+  "height": 276191,
+  "block_time": "2026-06-20T10:44:19.172142Z",
   "catching_up": false,
-  "peers": 7,
-  "active_validators": 0,
-  "total_bonded_unxrl": "0",
-  "validators": [],
-  "jailed": [],
+  "peers": 6,
+  "active_validators": 23,
+  "total_bonded_unxrl": "3706359593",
+  "validators": [
+    {
+      "moniker": "NodeSafe",
+      "tokens_unxrl": "1179593",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "nxrl-controlled-alpha",
+      "tokens_unxrl": "500000000",
+      "commission": "0.050000000000000000"
+    },
+    {
+      "moniker": "OneNov",
+      "tokens_unxrl": "1000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "Vinjan.Inc",
+      "tokens_unxrl": "1000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "nxrl-controlled-bravo",
+      "tokens_unxrl": "500000000",
+      "commission": "0.050000000000000000"
+    },
+    {
+      "moniker": "nxrl-controlled-echo",
+      "tokens_unxrl": "500000000",
+      "commission": "0.050000000000000000"
+    },
+    {
+      "moniker": "NODESYNC",
+      "tokens_unxrl": "595000000",
+      "commission": "0.050000000000000000"
+    },
+    {
+      "moniker": "dnsarz",
+      "tokens_unxrl": "1000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "BoyGau",
+      "tokens_unxrl": "1000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "LuckyStar",
+      "tokens_unxrl": "1000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "UTSA",
+      "tokens_unxrl": "595000000",
+      "commission": "0.050000000000000000"
+    },
+    {
+      "moniker": "Winnode",
+      "tokens_unxrl": "1000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "nxrl-controlled-delta",
+      "tokens_unxrl": "500000000",
+      "commission": "0.050000000000000000"
+    },
+    {
+      "moniker": "AlxVoy \u26a1 ANODE.TEAM",
+      "tokens_unxrl": "1000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "Noddex",
+      "tokens_unxrl": "1000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "NodeInvite",
+      "tokens_unxrl": "1000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "INCENTIVED.ORG",
+      "tokens_unxrl": "1000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "HERONODEVIETNAMESE",
+      "tokens_unxrl": "1000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "jackieluong",
+      "tokens_unxrl": "1180000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "MIPEnode",
+      "tokens_unxrl": "1000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "Node39",
+      "tokens_unxrl": "1000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "JohnWiard",
+      "tokens_unxrl": "1000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "nxrl-controlled-charlie",
+      "tokens_unxrl": "500000000",
+      "commission": "0.050000000000000000"
+    }
+  ],
+  "jailed": [
+    {
+      "moniker": "LuckyStar",
+      "tokens_unxrl": "1150000",
+      "status": "BOND_STATUS_UNBONDING",
+      "jailed": true
+    }
+  ],
   "faucet_unxrl": "21941213",
-  "refreshed": "2026-06-20T10:37:13.374400Z"
+  "refreshed": "2026-06-20T10:45:06.407206Z"
 }
