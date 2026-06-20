@@ -1,10 +1,10 @@
 {
   "chain_id": "nexarail-testnet-1",
   "app_version": "0.37.16",
-  "height": 275674,
-  "block_time": "2026-06-20T08:48:06.773977Z",
+  "height": 275712,
+  "block_time": "2026-06-20T08:54:33.710433Z",
   "catching_up": false,
-  "peers": 7,
+  "peers": 8,
   "active_validators": 23,
   "total_bonded_unxrl": "3706359593",
   "validators": [
@@ -133,5 +133,5 @@
     }
   ],
   "faucet_unxrl": "21941213",
-  "refreshed": "2026-06-20T08:49:02.768443Z"
+  "refreshed": "2026-06-20T08:54:58.945267Z"
 }
