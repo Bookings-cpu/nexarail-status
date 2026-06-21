@@ -1,8 +1,8 @@
 {
   "chain_id": "nexarail-mainnet-1",
   "app_version": "0.37.16",
-  "height": 10668,
-  "block_time": "2026-06-21T00:27:45.046844Z",
+  "height": 10724,
+  "block_time": "2026-06-21T00:32:52.502374Z",
   "catching_up": false,
   "peers": 6,
   "active_validators": 6,
@@ -47,6 +47,6 @@
       "jailed": true
     }
   ],
-  "faucet_unxrl": "149999999997995",
-  "refreshed": "2026-06-21T00:27:55.246612Z"
+  "faucet_unxrl": "149999399995879",
+  "refreshed": "2026-06-21T00:32:59.618306Z"
 }
