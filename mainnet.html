@@ -107,6 +107,25 @@ footer a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--lin
         </tbody>
       </table>
     </div>
+
+    <div class="card span12">
+      <h2>Coord Rewards in Custody (for The Cut-Over)</h2>
+      <div style="display:flex;gap:32px;flex-wrap:wrap;margin:8px 0">
+        <div>
+          <div class="sub">Pending (unclaimed validator rewards)</div>
+          <div class="big" id="coord-pending">—</div>
+        </div>
+        <div>
+          <div class="sub">Withdrawn + held in coord wallets</div>
+          <div class="big" id="coord-custody">—</div>
+        </div>
+      </div>
+      <div class="sub" style="margin-top:4px">
+        Per the
+        <a href="https://github.com/Bookings-cpu/nexarail/blob/main/docs/mainnet/COORD_REWARDS_COMMITMENT_2026-06-21.md" style="color:var(--accent)">coord rewards custody commitment</a>,
+        all coord-attributable staking rewards accruing between Proposal #1 execution (2026-06-26) and The Cut-Over ceremony at 100 active validators are held untouched and then <strong>delegated</strong> (not transferred) across non-coord active validators using a 70/30 formula.
+      </div>
+    </div>
   </div>
 
   <footer>
@@ -161,6 +180,11 @@ function render(s){
   document.getElementById('faucet').textContent = fmtNxrl(s.faucet_unxrl||0) + ' NXRL';
   document.getElementById('block-time').textContent = s.block_time ? ago(s.block_time) : '—';
   document.getElementById('bonded-total').textContent = fmtNxrl(s.total_bonded_unxrl||0) + ' NXRL bonded';
+
+  // Coord rewards custody (post-proposal-1 accrual)
+  const crc = s.coord_rewards_custody || {};
+  document.getElementById('coord-pending').textContent = fmtNxrl(crc.pending_unxrl||0) + ' NXRL';
+  document.getElementById('coord-custody').textContent = fmtNxrl(crc.withdrawn_held_unxrl||0) + ' NXRL';
 
   // Block freshness
   const blockAgeEl = document.getElementById('block-age');
