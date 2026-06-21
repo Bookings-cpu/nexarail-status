@@ -1,13 +1,18 @@
 {
   "chain_id": "nexarail-mainnet-1",
   "app_version": "0.37.16",
-  "height": 17248,
-  "block_time": "2026-06-21T10:31:57.508514Z",
+  "height": 17304,
+  "block_time": "2026-06-21T10:37:08.347295Z",
   "catching_up": false,
   "peers": 21,
-  "active_validators": 10,
-  "total_bonded_unxrl": "25002699900000",
+  "active_validators": 12,
+  "total_bonded_unxrl": "25003204900000",
   "validators": [
+    {
+      "moniker": "BoyGau",
+      "tokens_unxrl": "500000000",
+      "commission": "0.100000000000000000"
+    },
     {
       "moniker": "OneNov",
       "tokens_unxrl": "500000000",
@@ -44,6 +49,11 @@
       "commission": "0.100000000000000000"
     },
     {
+      "moniker": "NodeSafe",
+      "tokens_unxrl": "5000000",
+      "commission": "0.100000000000000000"
+    },
+    {
       "moniker": "NODESYNC",
       "tokens_unxrl": "699950000",
       "commission": "0.100000000000000000"
@@ -60,6 +70,6 @@
     }
   ],
   "jailed": [],
-  "faucet_unxrl": "149992799972603",
-  "refreshed": "2026-06-21T10:32:07.280186Z"
+  "faucet_unxrl": "149992199970487",
+  "refreshed": "2026-06-21T10:37:15.215098Z"
 }
