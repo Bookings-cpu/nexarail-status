@@ -1,10 +1,10 @@
 {
   "chain_id": "nexarail-mainnet-1",
   "app_version": "0.37.16",
-  "height": 31121,
-  "block_time": "2026-06-25T21:57:31.211092Z",
+  "height": 31122,
+  "block_time": "2026-06-25T22:04:00.605168Z",
   "catching_up": false,
-  "peers": 7,
+  "peers": 8,
   "active_validators": 24,
   "total_bonded_unxrl": "25010097900000",
   "validators": [
@@ -137,5 +137,5 @@
     "commitment_doc": "https://github.com/Bookings-cpu/nexarail/blob/main/docs/mainnet/COORD_REWARDS_COMMITMENT_2026-06-21.md",
     "distribution_event": "The Cut-Over ceremony at 100 active validators"
   },
-  "refreshed": "2026-06-25T22:06:29.100952Z"
+  "refreshed": "2026-06-25T22:11:46.426401Z"
 }
