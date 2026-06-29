@@ -4,131 +4,10 @@
   "height": 47672,
   "block_time": "2026-06-29T04:58:26.387951Z",
   "catching_up": false,
-  "peers": 13,
-  "active_validators": 24,
-  "total_bonded_unxrl": "35150096900000",
-  "validators": [
-    {
-      "moniker": "BoyGau",
-      "tokens_unxrl": "500000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "OneNov",
-      "tokens_unxrl": "500000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "LuckyStar",
-      "tokens_unxrl": "500000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "jackieluong",
-      "tokens_unxrl": "500000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "nxrl-controlled-charlie",
-      "tokens_unxrl": "5000000000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "Vinjan.Inc",
-      "tokens_unxrl": "500000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "nxrl-controlled-delta",
-      "tokens_unxrl": "5000000000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "UTSA",
-      "tokens_unxrl": "5000699950000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "Winnode",
-      "tokens_unxrl": "500000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "StingRay",
-      "tokens_unxrl": "140499000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "dnsarz",
-      "tokens_unxrl": "500000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "NodeInvite",
-      "tokens_unxrl": "580000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "INCENTIVED.ORG",
-      "tokens_unxrl": "568000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "nxrl-controlled-echo",
-      "tokens_unxrl": "5000000000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "Galaxy",
-      "tokens_unxrl": "500000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "HERONODEVIETNAMESE",
-      "tokens_unxrl": "550000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "nxrl-controlled-bravo",
-      "tokens_unxrl": "5000000000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "NodeSafe",
-      "tokens_unxrl": "500000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "VALIDARIOS",
-      "tokens_unxrl": "500000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "MIPEnode",
-      "tokens_unxrl": "500000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "Node39",
-      "tokens_unxrl": "500000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "NODESYNC",
-      "tokens_unxrl": "5000699950000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "JohnWiard",
-      "tokens_unxrl": "500000000",
-      "commission": "0.100000000000000000"
-    },
-    {
-      "moniker": "nxrl-controlled-alpha",
-      "tokens_unxrl": "5000000000000",
-      "commission": "0.100000000000000000"
-    }
-  ],
+  "peers": 11,
+  "active_validators": 0,
+  "total_bonded_unxrl": "0",
+  "validators": [],
   "jailed": [],
   "faucet_unxrl": "149989799962023",
   "coord_rewards_custody": {
@@ -137,5 +16,5 @@
     "commitment_doc": "https://github.com/Bookings-cpu/nexarail/blob/main/docs/mainnet/COORD_REWARDS_COMMITMENT_2026-06-21.md",
     "distribution_event": "The Cut-Over ceremony at 100 active validators"
   },
-  "refreshed": "2026-06-29T05:00:21.706649Z"
+  "refreshed": "2026-06-29T05:05:57.487404Z"
 }
