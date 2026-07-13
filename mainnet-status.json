@@ -1,12 +1,12 @@
 {
   "chain_id": "nexarail-mainnet-1",
   "app_version": "0.37.16",
-  "height": 79314,
-  "block_time": "2026-07-13T08:33:37.942538513Z",
+  "height": 79335,
+  "block_time": "2026-07-13T08:48:27.44341Z",
   "catching_up": false,
   "peers": 7,
   "active_validators": 30,
-  "total_bonded_unxrl": "38112766900000",
+  "total_bonded_unxrl": "38912766900000",
   "validators": [
     {
       "moniker": "Vicky_Pulsican",
@@ -20,7 +20,7 @@
     },
     {
       "moniker": "M256",
-      "tokens_unxrl": "500000000",
+      "tokens_unxrl": "100500000000",
       "commission": "0.100000000000000000"
     },
     {
@@ -35,7 +35,7 @@
     },
     {
       "moniker": "jackieluong",
-      "tokens_unxrl": "500000000",
+      "tokens_unxrl": "100500000000",
       "commission": "0.100000000000000000"
     },
     {
@@ -80,7 +80,7 @@
     },
     {
       "moniker": "airSintez",
-      "tokens_unxrl": "501000000",
+      "tokens_unxrl": "100501000000",
       "commission": "0.100000000000000000"
     },
     {
@@ -90,12 +90,12 @@
     },
     {
       "moniker": "dnsarz",
-      "tokens_unxrl": "500000000",
+      "tokens_unxrl": "100500000000",
       "commission": "0.100000000000000000"
     },
     {
       "moniker": "NodeInvite",
-      "tokens_unxrl": "580000000",
+      "tokens_unxrl": "100580000000",
       "commission": "0.100000000000000000"
     },
     {
@@ -115,7 +115,7 @@
     },
     {
       "moniker": "HERONODEVIETNAMESE",
-      "tokens_unxrl": "550000000",
+      "tokens_unxrl": "100550000000",
       "commission": "0.100000000000000000"
     },
     {
@@ -125,12 +125,12 @@
     },
     {
       "moniker": "NodeSafe",
-      "tokens_unxrl": "500000000",
+      "tokens_unxrl": "100500000000",
       "commission": "0.100000000000000000"
     },
     {
       "moniker": "VALIDARIOS",
-      "tokens_unxrl": "500000000",
+      "tokens_unxrl": "100500000000",
       "commission": "0.100000000000000000"
     },
     {
@@ -160,12 +160,12 @@
     }
   ],
   "jailed": [],
-  "faucet_unxrl": "147886199899168",
+  "faucet_unxrl": "147086199866051",
   "coord_rewards_custody": {
     "pending_unxrl": "0",
     "withdrawn_held_unxrl": "688841",
     "commitment_doc": "https://github.com/Bookings-cpu/nexarail/blob/main/docs/mainnet/COORD_REWARDS_COMMITMENT_2026-06-21.md",
     "distribution_event": "The Cut-Over ceremony at 100 active validators"
   },
-  "refreshed": "2026-07-13T08:34:23.876281Z"
+  "refreshed": "2026-07-13T08:50:13.493060Z"
 }
