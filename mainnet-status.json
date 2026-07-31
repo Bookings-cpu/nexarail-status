@@ -1,12 +1,12 @@
 {
   "chain_id": "nexarail-mainnet-1",
   "app_version": "0.37.16",
-  "height": 142699,
-  "block_time": "2026-07-31T17:11:11.25413Z",
+  "height": 142866,
+  "block_time": "2026-07-31T17:26:34.329145Z",
   "catching_up": false,
-  "peers": 15,
-  "active_validators": 4,
-  "total_bonded_unxrl": "19996500300000",
+  "peers": 7,
+  "active_validators": 5,
+  "total_bonded_unxrl": "24995000450000",
   "validators": [
     {
       "moniker": "nxrl-controlled-charlie",
@@ -16,6 +16,11 @@
     {
       "moniker": "nxrl-controlled-delta",
       "tokens_unxrl": "4999500000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "nxrl-controlled-echo",
+      "tokens_unxrl": "4998500150000",
       "commission": "0.100000000000000000"
     },
     {
@@ -145,12 +150,6 @@
       "jailed": true
     },
     {
-      "moniker": "nxrl-controlled-echo",
-      "tokens_unxrl": "4998500150000",
-      "status": "BOND_STATUS_UNBONDING",
-      "jailed": true
-    },
-    {
       "moniker": "Galaxy",
       "tokens_unxrl": "200500000000",
       "status": "BOND_STATUS_UNBONDED",
@@ -202,9 +201,9 @@
   "faucet_unxrl": "144043620840568",
   "coord_rewards_custody": {
     "pending_unxrl": "0",
-    "withdrawn_held_unxrl": "406487926160",
+    "withdrawn_held_unxrl": "406487921160",
     "commitment_doc": "https://github.com/Bookings-cpu/nexarail/blob/main/docs/mainnet/COORD_REWARDS_COMMITMENT_2026-06-21.md",
     "distribution_event": "The Cut-Over ceremony at 100 active validators"
   },
-  "refreshed": "2026-07-31T17:11:19.141404Z"
+  "refreshed": "2026-07-31T17:26:43.667136Z"
 }
