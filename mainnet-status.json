@@ -4,7 +4,7 @@
   "height": 173600,
   "block_time": "2026-08-04T18:00:39.891191Z",
   "catching_up": false,
-  "peers": 14,
+  "peers": 16,
   "active_validators": 2,
   "total_bonded_unxrl": "9999000000000",
   "validators": [
@@ -208,5 +208,5 @@
     "commitment_doc": "https://github.com/Bookings-cpu/nexarail/blob/main/docs/mainnet/COORD_REWARDS_COMMITMENT_2026-06-21.md",
     "distribution_event": "The Cut-Over ceremony at 100 active validators"
   },
-  "refreshed": "2026-08-04T21:12:27.057072Z"
+  "refreshed": "2026-08-04T21:27:30.587277Z"
 }
