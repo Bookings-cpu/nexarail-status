@@ -1,50 +1,42 @@
 {
   "chain_id": "nexarail-mainnet-2",
-  "network_name": "NexaRail Mainnet",
-  "status": "LIVE",
-  "genesis_time": "2026-09-15T13:19:13Z",
-  "relaunched_at": "2026-09-15T13:36:26Z",
-  "latest_block_height": 132,
-  "latest_block_time": "2026-09-15T13:36:16.6586012Z",
+  "app_version": "0.37.16",
+  "height": 141,
+  "block_time": "2026-09-15T13:37:04.547908227Z",
   "catching_up": false,
-  "peer_count": "4",
-  "validator_count": 6,
+  "peers": 4,
+  "active_validators": 6,
+  "total_bonded_unxrl": "25000500000000",
   "validators": [
     {
       "moniker": "onboarding-test",
-      "tokens_nxrl": 500.0,
-      "status": "BOND_STATUS_BONDED",
-      "jailed": false
+      "tokens_unxrl": "500000000",
+      "commission": "0.100000000000000000"
     },
     {
       "moniker": "nexarail-charlie",
-      "tokens_nxrl": 5000000.0,
-      "status": "BOND_STATUS_BONDED",
-      "jailed": false
+      "tokens_unxrl": "5000000000000",
+      "commission": "0.100000000000000000"
     },
     {
       "moniker": "nexarail-delta",
-      "tokens_nxrl": 5000000.0,
-      "status": "BOND_STATUS_BONDED",
-      "jailed": false
+      "tokens_unxrl": "5000000000000",
+      "commission": "0.100000000000000000"
     },
     {
       "moniker": "nexarail-echo",
-      "tokens_nxrl": 5000000.0,
-      "status": "BOND_STATUS_BONDED",
-      "jailed": false
+      "tokens_unxrl": "5000000000000",
+      "commission": "0.100000000000000000"
     },
     {
       "moniker": "nexarail-alpha",
-      "tokens_nxrl": 5000000.0,
-      "status": "BOND_STATUS_BONDED",
-      "jailed": false
+      "tokens_unxrl": "5000000000000",
+      "commission": "0.100000000000000000"
     },
     {
       "moniker": "nexarail-bravo",
-      "tokens_nxrl": 5000000.0,
-      "status": "BOND_STATUS_BONDED",
-      "jailed": false
+      "tokens_unxrl": "5000000000000",
+      "commission": "0.100000000000000000"
     }
   ],
   "total_supply_nxrl": 1000000000,
@@ -54,5 +46,5 @@
   "binary_url": "https://github.com/Bookings-cpu/nexarail/releases/download/mainnet-genesis-nexarail-mainnet-2/nexaraild-linux-amd64",
   "min_gas_price": "0.001unxrl",
   "note": "Fresh relaunch on Hetzner Cloud after the August 2026 outage. New chain-id, new genesis, real tokenomics. Onboarding open for external validators.",
-  "updated_at": "2026-09-15T13:36:26Z"
+  "updated_at": "2026-09-15T13:37:12Z"
 }
