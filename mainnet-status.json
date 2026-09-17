@@ -1,10 +1,10 @@
 {
   "chain_id": "nexarail-mainnet-2",
   "app_version": "0.37.16",
-  "height": 26728,
-  "block_time": "2026-09-17T04:53:10.831488334Z",
+  "height": 26784,
+  "block_time": "2026-09-17T04:58:08.733772256Z",
   "catching_up": false,
-  "peers": 16,
+  "peers": 17,
   "active_validators": 15,
   "total_bonded_unxrl": "25005000949015",
   "faucet_unxrl": 164119992137052,
@@ -92,5 +92,5 @@
   "binary_url": "https://github.com/Bookings-cpu/nexarail/releases/download/mainnet-genesis-nexarail-mainnet-2/nexaraild-linux-amd64",
   "min_gas_price": "0.001unxrl",
   "note": "Fresh relaunch on Hetzner Cloud after the August 2026 outage. New chain-id, new genesis, real tokenomics.",
-  "updated_at": "2026-09-17T04:53:18Z"
+  "updated_at": "2026-09-17T04:58:19Z"
 }
