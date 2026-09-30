@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>NexaRail — Add to Wallet</title>
+<style>
+  body { font-family: -apple-system, Helvetica, Arial, sans-serif; background: #0d0d12; color: #eee; margin: 0; padding: 60px 20px; text-align: center; }
+  h1 { font-size: 28px; margin-bottom: 8px; }
+  h1 span { color: #f5a623; }
+  p { color: #aaa; max-width: 480px; margin: 0 auto 30px; line-height: 1.5; }
+  button { background: #f5a623; color: #0d0d12; border: none; padding: 16px 32px; font-size: 16px; font-weight: 600; border-radius: 8px; cursor: pointer; margin: 8px; }
+  button:hover { background: #ffb84d; }
+  button:disabled { background: #444; color: #888; cursor: not-allowed; }
+  #status { margin-top: 24px; font-size: 14px; color: #7fd97f; min-height: 20px; }
+  #status.error { color: #ff6b6b; }
+  .info { margin-top: 40px; font-size: 13px; color: #666; text-align: left; max-width: 480px; margin-left: auto; margin-right: auto; }
+  .info code { background: #1a1a22; padding: 2px 6px; border-radius: 4px; color: #ccc; }
+</style>
+</head>
+<body>
+  <h1>Nexa<span>Rail</span> Wallet Setup</h1>
+  <p>Add the NexaRail mainnet-2 network to your Keplr or Leap wallet in one click.</p>
+
+  <button id="keplr-btn" onclick="addChain('keplr')">Add to Keplr</button>
+  <button id="leap-btn" onclick="addChain('leap')">Add to Leap</button>
+
+  <div id="status"></div>
+
+  <div class="info">
+    <p><strong>Network details</strong></p>
+    <p>Chain ID: <code>nexarail-mainnet-2</code></p>
+    <p>RPC: <code>https://5-161-72-48.nip.io/rpc</code></p>
+    <p>REST: <code>https://5-161-72-48.nip.io</code></p>
+    <p>Denom: <code>unxrl</code> (1 NXRL = 1,000,000 unxrl)</p>
+  </div>
+
+<script>
+const chainInfo = {
+  chainId: "nexarail-mainnet-2",
+  chainName: "NexaRail",
+  rpc: "https://5-161-72-48.nip.io/rpc",
+  rest: "https://5-161-72-48.nip.io",
+  bip44: { coinType: 118 },
+  bech32Config: {
+    bech32PrefixAccAddr: "nxr",
+    bech32PrefixAccPub: "nxrpub",
+    bech32PrefixValAddr: "nxrvaloper",
+    bech32PrefixValPub: "nxrvaloperpub",
+    bech32PrefixConsAddr: "nxrvalcons",
+    bech32PrefixConsPub: "nxrvalconspub",
+  },
+  currencies: [
+    { coinDenom: "NXRL", coinMinimalDenom: "unxrl", coinDecimals: 6 }
+  ],
+  feeCurrencies: [
+    {
+      coinDenom: "NXRL",
+      coinMinimalDenom: "unxrl",
+      coinDecimals: 6,
+      gasPriceStep: { low: 0.001, average: 0.001, high: 0.01 }
+    }
+  ],
+  stakeCurrency: { coinDenom: "NXRL", coinMinimalDenom: "unxrl", coinDecimals: 6 },
+};
+
+async function addChain(wallet) {
+  const statusEl = document.getElementById('status');
+  statusEl.className = '';
+  statusEl.textContent = 'Requesting...';
+
+  const provider = wallet === 'keplr' ? window.keplr : window.leap;
+
+  if (!provider) {
+    statusEl.className = 'error';
+    statusEl.textContent = wallet === 'keplr'
+      ? 'Keplr extension not detected. Install it from keplr.app first.'
+      : 'Leap extension not detected. Install it from leapwallet.io first.';
+    return;
+  }
+
+  try {
+    await provider.experimentalSuggestChain(chainInfo);
+    await provider.enable(chainInfo.chainId);
+    statusEl.textContent = 'NexaRail added successfully! Check your wallet.';
+  } catch (e) {
+    statusEl.className = 'error';
+    statusEl.textContent = 'Failed: ' + (e.message || e);
+  }
+}
+</script>
+</body>
+</html>
