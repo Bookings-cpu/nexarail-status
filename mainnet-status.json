@@ -1,16 +1,21 @@
 {
   "chain_id": "nexarail-mainnet-2",
   "app_version": "0.37.16",
-  "height": 49736,
-  "block_time": "2026-09-18T14:53:28.685483422Z",
+  "height": 250200,
+  "block_time": "2026-09-30T22:57:50.257746545Z",
   "catching_up": false,
-  "peers": 19,
-  "active_validators": 16,
-  "total_bonded_unxrl": "25005580949015",
-  "faucet_unxrl": 163909949947928,
+  "peers": 21,
+  "active_validators": 20,
+  "total_bonded_unxrl": "25007581949015",
+  "faucet_unxrl": 162068390894025,
   "validators": [
     {
       "moniker": "Vicky_Pulsican",
+      "tokens_unxrl": "500000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "LuckyStar",
       "tokens_unxrl": "500000000",
       "commission": "0.100000000000000000"
     },
@@ -30,9 +35,14 @@
       "commission": "0.100000000000000000"
     },
     {
+      "moniker": "airSintez",
+      "tokens_unxrl": "501000000",
+      "commission": "0.100000000000000000"
+    },
+    {
       "moniker": "Vinjan.Inc",
       "tokens_unxrl": "500000000",
-      "commission": "0.500000000000000000"
+      "commission": "0.100000000000000000"
     },
     {
       "moniker": "UTSA",
@@ -60,6 +70,11 @@
       "commission": "0.100000000000000000"
     },
     {
+      "moniker": "M256",
+      "tokens_unxrl": "500000000",
+      "commission": "0.100000000000000000"
+    },
+    {
       "moniker": "dnsarz",
       "tokens_unxrl": "500000000",
       "commission": "0.100000000000000000"
@@ -67,6 +82,11 @@
     {
       "moniker": "nexarail-echo",
       "tokens_unxrl": "5000000000000",
+      "commission": "0.100000000000000000"
+    },
+    {
+      "moniker": "Sr20de",
+      "tokens_unxrl": "500000000",
       "commission": "0.100000000000000000"
     },
     {
@@ -97,5 +117,5 @@
   "binary_url": "https://github.com/Bookings-cpu/nexarail/releases/download/mainnet-genesis-nexarail-mainnet-2/nexaraild-linux-amd64",
   "min_gas_price": "0.001unxrl",
   "note": "Fresh relaunch on Hetzner Cloud after the August 2026 outage. New chain-id, new genesis, real tokenomics.",
-  "updated_at": "2026-09-18T14:53:37Z"
+  "updated_at": "2026-09-30T22:57:53Z"
 }
