@@ -466,7 +466,10 @@ import { DirectSecp256k1HdWallet } from "https://esm.sh/@cosmjs/proto-signing@0.
 import QRCode from "https://esm.sh/qrcode@1.5.3?bundle";
 
 const CHAIN_ID = "nexarail-mainnet-2";
-const RPC = "https://5-161-72-48.nip.io/rpc";
+// Trailing slash matters: nginx 301-redirects bare "/rpc" -> "/rpc/", and
+// browsers refuse to follow redirects for CORS preflight requests, which
+// silently breaks every CosmJS call (signing, broadcast, wallet connect).
+const RPC = "https://5-161-72-48.nip.io/rpc/";
 const REST = "https://5-161-72-48.nip.io";
 const DENOM = "unxrl";
 const DECIMALS = 6;
@@ -528,7 +531,7 @@ function nxrlToUnxrl(input){
 // --- live network pill ---
 async function refreshNet(){
   try{
-    const r = await fetch(RPC + '/status?t=' + Date.now(), {cache:'no-store'});
+    const r = await fetch(RPC + 'status?t=' + Date.now(), {cache:'no-store'});
     if(!r.ok) throw new Error();
     const data = await r.json();
     const sync = data.result.sync_info;
@@ -606,8 +609,14 @@ document.getElementById('mnemonic-confirm').addEventListener('change', e => {
 
 window.confirmMnemonicSaved = async function(){
   closeModal('mnemonic-modal');
-  const accounts = await localSigner.getAccounts();
-  await activateSigner(localSigner, accounts[0].address, 'Local wallet', true);
+  const errEl = document.getElementById('connect-error');
+  try{
+    const accounts = await localSigner.getAccounts();
+    await activateSigner(localSigner, accounts[0].address, 'Local wallet', true);
+  }catch(e){
+    errEl.textContent = 'Could not connect to the network: ' + (e.message || e);
+    errEl.style.display = 'block';
+  }
 };
 
 // --- import existing wallet ---
@@ -684,7 +693,7 @@ window.refreshBalance = async function(){
 // --- recent activity (merges sent + received via RPC tx_search; REST tx-events
 // endpoint returns "Not Implemented" on this chain's gateway build, so RPC is used) ---
 async function rpcTxSearch(query){
-  const url = `${RPC}/tx_search?query=${encodeURIComponent('"' + query + '"')}&order_by=%22desc%22&per_page=5`;
+  const url = `${RPC}tx_search?query=${encodeURIComponent('"' + query + '"')}&order_by=%22desc%22&per_page=5`;
   const r = await fetch(url);
   if(!r.ok) throw new Error('HTTP ' + r.status);
   const data = await r.json();

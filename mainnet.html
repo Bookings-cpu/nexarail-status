@@ -221,12 +221,12 @@ function render(s){
   document.getElementById('age').textContent = s.refreshed ? ago(s.refreshed) : 'just now';
 }
 
-const RPC = 'https://5-161-72-48.nip.io/rpc';
+const RPC = 'https://5-161-72-48.nip.io/rpc/';
 async function refreshLive(){
   const blockAgeEl = document.getElementById('block-age');
   const catchEl = document.getElementById('catching-up');
   try{
-    const r = await fetch(RPC + '/status?t=' + Date.now(), {cache:'no-store'});
+    const r = await fetch(RPC + 'status?t=' + Date.now(), {cache:'no-store'});
     if(!r.ok) throw new Error('HTTP '+r.status);
     const data = await r.json();
     const sync = data.result.sync_info;
