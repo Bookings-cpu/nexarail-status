@@ -304,10 +304,10 @@ footer a:hover{color:var(--dim)}
           <textarea id="import-mnemonic" placeholder="word1 word2 word3 ..."></textarea>
         </div>
         <button class="primary" onclick="importWallet()">Import wallet</button>
-        <div id="import-error" class="status-box bad"></div>
+        <div id="import-error" class="status-box"></div>
       </div>
 
-      <div id="connect-error" class="status-box bad"></div>
+      <div id="connect-error" class="status-box"></div>
     </div>
 
     <div class="card" id="saved-wallet-card" style="display:none">
@@ -436,7 +436,7 @@ footer a:hover{color:var(--dim)}
       <button class="ghost" onclick="closeModal('save-device-modal')">Cancel</button>
       <button class="primary" onclick="confirmSaveToDevice()">Save</button>
     </div>
-    <div id="save-device-error" class="status-box bad"></div>
+    <div id="save-device-error" class="status-box"></div>
   </div>
 </div>
 
@@ -453,7 +453,7 @@ footer a:hover{color:var(--dim)}
       <button class="ghost" onclick="closeModal('unlock-modal')">Cancel</button>
       <button class="primary" onclick="confirmUnlock()">Unlock</button>
     </div>
-    <div id="unlock-error" class="status-box bad"></div>
+    <div id="unlock-error" class="status-box"></div>
     <div style="margin-top:14px;text-align:center">
       <button class="link" onclick="forgetDevice()">Forget this saved wallet</button>
     </div>
