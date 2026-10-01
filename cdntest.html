@@ -1,0 +1,20 @@
+<!doctype html><html><body>
+<script type="module">
+window.__results = {};
+async function testReal(name, url) {
+  try {
+    const m = await import(url);
+    // actually exercise code that would touch Buffer/Long internally
+    const fee = m.calculateFee(100000, m.GasPrice.fromString("0.001unxrl"));
+    window.__results[name] = { ok: true, fee: JSON.stringify(fee) };
+  } catch(e) {
+    window.__results[name] = { ok: false, error: String(e && e.stack || e) };
+  }
+}
+await testReal('bundle', 'https://esm.sh/@cosmjs/stargate@0.32.4?bundle');
+await testReal('nobundle', 'https://esm.sh/@cosmjs/stargate@0.32.4');
+await testReal('bundledeps', 'https://esm.sh/@cosmjs/stargate@0.32.4?bundle-deps');
+await testReal('target-es2022', 'https://esm.sh/@cosmjs/stargate@0.32.4?target=es2022&bundle');
+window.__done = true;
+</script>
+</body></html>
