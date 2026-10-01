@@ -3,161 +3,379 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NexaRail — wallet</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23ffb020'/%3E%3C/svg%3E">
+<title>NexaRail Wallet</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23f0b429'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0a0f0d;
-  --panel:#11181a;
-  --line:#1c2729;
-  --txt:#e8efeb;
-  --dim:#8b9590;
-  --ok:#00d18b;
-  --warn:#ffb020;
-  --bad:#ff5566;
-  --accent:#ffd17a;
+  --bg:#07080a;
+  --panel:#0f1113;
+  --panel-2:#13161a;
+  --line:#1e2227;
+  --line-soft:rgba(255,255,255,.06);
+  --txt:#f2f3f5;
+  --dim:#8a9099;
+  --dim-2:#5b6169;
+  --ok:#22c55e;
+  --warn:#f5a623;
+  --bad:#ef4444;
+  --gold-1:#ffdf8a;
+  --gold-2:#e8ab2f;
+  --radius:16px;
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);font:14px/1.5 -apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif}
-.wrap{max-width:1080px;margin:0 auto;padding:32px 24px 60px}
-header{display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:32px;flex-wrap:wrap;gap:10px}
-header h1{font-size:18px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin:0}
-header h1 span{color:var(--accent)}
-header nav{font-size:12px}
-header nav a{color:var(--dim);text-decoration:none;margin-left:16px;border-bottom:1px solid transparent}
-header nav a:hover{color:var(--txt);border-color:var(--line)}
-.grid{display:grid;gap:20px;grid-template-columns:repeat(12,1fr)}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 22px}
-.card h2{margin:0 0 4px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:600}
-.card .big{font-size:30px;font-weight:600;letter-spacing:-.01em;margin:6px 0 2px;font-feature-settings:'tnum' 1}
-.card .sub{font-size:12px;color:var(--dim)}
-.span4{grid-column:span 4}
-.span6{grid-column:span 6}
-.span12{grid-column:span 12}
-@media (max-width:760px){.span4,.span6{grid-column:span 12}}
-.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:middle}
-.dot.ok{background:var(--ok);box-shadow:0 0 8px var(--ok)}
-.dot.warn{background:var(--warn);box-shadow:0 0 8px var(--warn)}
-.dot.bad{background:var(--bad);box-shadow:0 0 8px var(--bad)}
-.dot.dim{background:var(--dim)}
-button{background:var(--accent);color:#1a1200;border:none;padding:12px 22px;font-size:14px;font-weight:600;border-radius:8px;cursor:pointer;font-family:inherit}
-button:hover{background:#ffdd99}
-button:disabled{background:#3a3a30;color:#777;cursor:not-allowed}
-button.secondary{background:transparent;border:1px solid var(--line);color:var(--txt)}
-button.secondary:hover{border-color:var(--accent);color:var(--accent)}
-input{width:100%;background:#0d1412;border:1px solid var(--line);color:var(--txt);padding:11px 13px;border-radius:7px;font-size:14px;font-family:'SF Mono',Menlo,Consolas,monospace}
-input:focus{outline:none;border-color:var(--accent)}
-label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin-bottom:6px;font-weight:600}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(900px 500px at 50% -10%, rgba(232,171,47,.08), transparent 60%),
+    var(--bg);
+  color:var(--txt);
+  font:15px/1.5 'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
+.tnum{font-feature-settings:'tnum' 1;font-variant-numeric:tabular-nums}
+
+/* top bar */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  max-width:760px;margin:0 auto;padding:26px 24px 0;
+}
+.brand{font-size:17px;font-weight:700;letter-spacing:-.01em}
+.brand span{background:linear-gradient(135deg,var(--gold-1),var(--gold-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.netpill{
+  display:flex;align-items:center;gap:8px;font-size:12px;color:var(--dim);
+  background:var(--panel);border:1px solid var(--line);padding:7px 13px;border-radius:999px;
+}
+.netpill .tnum{color:var(--txt);font-weight:600}
+.topbar a.explink{font-size:12px;color:var(--dim);text-decoration:none;border-bottom:1px solid transparent}
+.topbar a.explink:hover{color:var(--txt);border-color:var(--line)}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%}
+.dot.ok{background:var(--ok);box-shadow:0 0 8px rgba(34,197,94,.7)}
+.dot.warn{background:var(--warn);box-shadow:0 0 8px rgba(245,166,35,.6)}
+.dot.bad{background:var(--bad);box-shadow:0 0 8px rgba(239,68,68,.6)}
+.dot.dim{background:var(--dim-2)}
+
+.wrap{max-width:560px;margin:0 auto;padding:56px 24px 80px}
+
+/* generic card */
+.card{
+  background:linear-gradient(180deg,var(--panel-2),var(--panel));
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:30px 32px;
+  box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 24px 48px -28px rgba(0,0,0,.7);
+}
+.card + .card{margin-top:20px}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim-2);font-weight:600;margin:0 0 10px}
+
+/* hero (disconnected) */
+.hero h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px;text-align:center}
+.hero p.lead{color:var(--dim);text-align:center;margin:0 0 30px;font-size:14px;max-width:420px;margin-left:auto;margin-right:auto}
+
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:22px}
+.tab{flex:1;background:transparent;border:none;color:var(--dim);font-family:inherit;font-size:13px;font-weight:600;padding:10px;border-radius:9px;cursor:pointer;transition:all .15s}
+.tab.active{background:var(--line-soft);color:var(--txt)}
+.tab:hover:not(.active){color:var(--txt)}
+
+.walletgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.walletbtn{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 10px;
+  cursor:pointer;transition:all .15s;color:var(--txt);font-family:inherit;
+}
+.walletbtn:hover{border-color:rgba(232,171,47,.4);background:var(--line-soft);transform:translateY(-1px)}
+.walletbtn .badge{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#0a0a0a}
+.walletbtn .label{font-size:12px;font-weight:600}
+.badge.keplr{background:linear-gradient(135deg,#8a7dff,#5b4ce0)}
+.badge.leap{background:linear-gradient(135deg,#5fe3b3,#1fb584)}
+.badge.cosmostation{background:linear-gradient(135deg,#6fb2ff,#2f7fe6)}
+.walletbtn .badge.keplr,.walletbtn .badge.leap,.walletbtn .badge.cosmostation{color:#070a09}
+
+.hint-row{display:flex;align-items:center;gap:10px;margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.hint-row .sub{font-size:12px;color:var(--dim-2)}
+
+textarea{
+  width:100%;background:#0a0c0e;border:1px solid var(--line);color:var(--txt);
+  padding:14px 16px;border-radius:10px;font-size:14px;font-family:'JetBrains Mono',monospace;
+  resize:vertical;min-height:90px;line-height:1.6;
+}
+textarea:focus{outline:none;border-color:var(--gold-2)}
+input[type=text],input[type=password]{
+  width:100%;background:#0a0c0e;border:1px solid var(--line);color:var(--txt);
+  padding:13px 15px;border-radius:10px;font-size:14px;font-family:'JetBrains Mono',monospace;
+}
+input:focus{outline:none;border-color:var(--gold-2)}
+label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim-2);margin-bottom:7px;font-weight:600}
 .field{margin-bottom:16px}
-.field-row{display:flex;gap:8px;align-items:stretch}
+
+button.primary{
+  background:linear-gradient(135deg,var(--gold-1),var(--gold-2));
+  color:#1c1300;border:none;padding:14px 24px;font-size:14px;font-weight:700;
+  border-radius:11px;cursor:pointer;font-family:inherit;width:100%;
+  box-shadow:0 8px 20px -8px rgba(232,171,47,.5);
+  transition:transform .15s, box-shadow .15s;
+}
+button.primary:hover{transform:translateY(-1px);box-shadow:0 10px 24px -8px rgba(232,171,47,.65)}
+button.primary:disabled{background:#2a2a26;color:#6b6b63;box-shadow:none;cursor:not-allowed;transform:none}
+button.ghost{
+  background:transparent;border:1px solid var(--line);color:var(--txt);
+  padding:13px 22px;font-size:13px;font-weight:600;border-radius:11px;cursor:pointer;font-family:inherit;width:100%;
+}
+button.ghost:hover{border-color:var(--dim)}
+button.link{background:none;border:none;color:var(--dim);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline;padding:0}
+button.link:hover{color:var(--txt)}
+
+/* connected state */
+.balance-hero{text-align:center;padding:6px 0 4px}
+.balance-hero .amount{font-size:52px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.balance-hero .denom{font-size:16px;color:var(--dim);font-weight:600;margin-left:8px}
+.addr-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px}
+.addr-chip{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--dim);
+  background:var(--panel);border:1px solid var(--line);padding:7px 13px;border-radius:999px;
+}
+.icon-btn{background:none;border:none;color:var(--dim);cursor:pointer;padding:4px;display:inline-flex;align-items:center}
+.icon-btn:hover{color:var(--txt)}
+.connmeta{display:flex;justify-content:center;gap:16px;margin-top:18px}
+.connmeta button.link{font-size:11.5px}
+
+.send-form .field-row{display:flex;gap:8px}
 .field-row input{flex:1}
-.addr{font-family:'SF Mono',Menlo,Consolas,monospace;font-size:13px;word-break:break-all}
-.status{padding:14px 18px;border-radius:8px;font-size:13px;margin-top:16px;display:none;word-break:break-all}
-.status.ok{display:block;background:rgba(0,209,139,.08);border:1px solid rgba(0,209,139,.3);color:var(--ok)}
-.status.bad{display:block;background:rgba(255,85,102,.08);border:1px solid rgba(255,85,102,.3);color:var(--bad)}
-.status.pending{display:block;background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.3);color:var(--warn)}
-.status a{color:inherit}
-.walletrow{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:#0d1412;border:1px solid var(--line);border-radius:999px;font-size:12px}
-footer{margin-top:48px;font-size:11px;color:var(--dim);text-align:center;letter-spacing:.05em}
-footer a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--line)}
-.kbd{font-family:'SF Mono',Menlo,Consolas,monospace;font-size:11px;background:var(--panel);padding:1px 5px;border-radius:3px;border:1px solid var(--line);color:var(--dim)}
-.hint{font-size:11px;color:var(--dim);margin-top:4px}
-.maxlink{font-size:11px;color:var(--accent);cursor:pointer;text-decoration:underline;white-space:nowrap;align-self:center;padding:0 2px}
+.maxbtn{
+  font-size:11px;font-weight:700;color:#1c1300;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));
+  border:none;border-radius:7px;padding:0 14px;cursor:pointer;
+}
+.hint{font-size:11.5px;color:var(--dim-2);margin-top:6px}
+
+.status-box{padding:15px 18px;border-radius:11px;font-size:13px;margin-top:16px;display:none;word-break:break-all;line-height:1.6}
+.status-box.ok{display:block;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);color:#4ade80}
+.status-box.bad{display:block;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);color:#f87171}
+.status-box.pending{display:block;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);color:var(--warn)}
+.status-box a{color:inherit}
+
+/* modal */
+.modal-backdrop{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;z-index:50;padding:20px;
+}
+.modal-backdrop.show{display:flex}
+.modal{
+  background:var(--panel-2);border:1px solid var(--line);border-radius:18px;padding:32px;max-width:460px;width:100%;
+  box-shadow:0 40px 80px -24px rgba(0,0,0,.8);
+}
+.modal h3{margin:0 0 6px;font-size:18px;font-weight:700}
+.modal p.sub{color:var(--dim);font-size:13px;margin:0 0 20px}
+.mnemonic-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;background:#0a0c0e;border:1px solid var(--line);
+  border-radius:12px;padding:16px;margin-bottom:18px;
+}
+.mnemonic-word{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--txt);display:flex;gap:6px}
+.mnemonic-word .n{color:var(--dim-2);width:16px;text-align:right}
+.confirm-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;font-size:13px;color:var(--dim)}
+.confirm-row input{width:auto;margin-top:2px}
+.modal-actions{display:flex;gap:10px}
+.modal-actions button{flex:1}
+
+footer{margin-top:52px;font-size:11.5px;color:var(--dim-2);text-align:center;line-height:1.8}
+footer a{color:var(--dim-2);text-decoration:none;border-bottom:1px solid var(--line)}
+footer a:hover{color:var(--dim)}
+
+@media (max-width:480px){
+  .walletgrid{grid-template-columns:1fr}
+  .balance-hero .amount{font-size:40px}
+}
 </style>
 </head>
 <body>
+
+<div class="topbar">
+  <div class="brand">Nexa<span>Rail</span></div>
+  <div class="topbar-right">
+    <a class="explink" href="mainnet.html">Explorer</a>
+    <div class="netpill"><span class="dot dim" id="net-dot"></span><span class="tnum" id="net-height">—</span></div>
+  </div>
+</div>
+
 <div class="wrap">
-  <header>
-    <h1>Nexa<span>Rail</span> — wallet</h1>
-    <nav>
-      <a href="mainnet.html">network status</a>
-      <a href="wallet.html">add to wallet</a>
-    </nav>
-  </header>
 
-  <div class="grid">
-
-    <div class="card span4">
-      <h2>Block height</h2>
-      <div class="big" id="height">—</div>
-      <div class="sub" id="block-age"><span class="dot dim"></span>—</div>
-    </div>
-    <div class="card span4">
-      <h2>Active validators</h2>
-      <div class="big" id="val-count">—</div>
-      <div class="sub" id="bonded-total">— total bonded</div>
-    </div>
-    <div class="card span4">
-      <h2>Min gas price</h2>
-      <div class="big" style="font-size:22px">0.001 unxrl</div>
-      <div class="sub">chain-id <span id="chain-id">—</span></div>
+  <!-- DISCONNECTED STATE -->
+  <div id="view-disconnected">
+    <div class="hero">
+      <h1>Your NexaRail Wallet</h1>
+      <p class="lead">Connect a wallet you already have, or create one right here — no install required.</p>
     </div>
 
-    <div class="card span12" id="wallet-card">
-      <h2>Wallet</h2>
-      <div id="wallet-disconnected">
-        <div class="sub" style="margin-bottom:16px">Connect Keplr or Leap to view your balance and send NXRL. If the chain isn't added yet, connecting will prompt to add it automatically.</div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button onclick="connectWallet('keplr')">Connect Keplr</button>
-          <button class="secondary" onclick="connectWallet('leap')">Connect Leap</button>
-        </div>
-        <div id="connect-error" class="status bad"></div>
+    <div class="card">
+      <div class="tabs">
+        <button class="tab active" data-tab="connect" onclick="switchTab('connect')">Connect</button>
+        <button class="tab" data-tab="create" onclick="switchTab('create')">Create New</button>
+        <button class="tab" data-tab="import" onclick="switchTab('import')">Import</button>
       </div>
-      <div id="wallet-connected" style="display:none">
-        <div class="walletrow">
-          <div>
-            <div class="sub">Connected address</div>
-            <div class="addr" id="my-address">—</div>
+
+      <div id="panel-connect">
+        <div class="walletgrid">
+          <button class="walletbtn" onclick="connectExtension('keplr')">
+            <span class="badge keplr">K</span><span class="label">Keplr</span>
+          </button>
+          <button class="walletbtn" onclick="connectExtension('leap')">
+            <span class="badge leap">L</span><span class="label">Leap</span>
+          </button>
+          <button class="walletbtn" onclick="connectExtension('cosmostation')">
+            <span class="badge cosmostation">C</span><span class="label">Cosmostation</span>
+          </button>
+        </div>
+        <div class="hint-row">
+          <span class="sub">Don't have one of these installed? Use <b style="color:var(--dim)">Create New</b> above instead — it works immediately, no extension needed.</span>
+        </div>
+      </div>
+
+      <div id="panel-create" style="display:none">
+        <p style="color:var(--dim);font-size:13px;line-height:1.6;margin:0 0 18px">
+          Generates a new 24-word recovery phrase in your browser. Nothing is sent anywhere —
+          you'll need to save the phrase yourself to access this wallet again later.
+        </p>
+        <button class="primary" onclick="createWallet()">Generate new wallet</button>
+      </div>
+
+      <div id="panel-import" style="display:none">
+        <div class="field">
+          <label>Recovery phrase (12 or 24 words)</label>
+          <textarea id="import-mnemonic" placeholder="word1 word2 word3 ..."></textarea>
+        </div>
+        <button class="primary" onclick="importWallet()">Import wallet</button>
+        <div id="import-error" class="status-box bad"></div>
+      </div>
+
+      <div id="connect-error" class="status-box bad"></div>
+    </div>
+
+    <div class="card" id="saved-wallet-card" style="display:none">
+      <div class="eyebrow">Saved on this device</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <span style="color:var(--dim);font-size:13px">An encrypted wallet is saved in this browser.</span>
+        <button class="ghost" style="width:auto" onclick="openUnlockModal()">Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONNECTED STATE -->
+  <div id="view-connected" style="display:none">
+    <div class="card">
+      <div class="balance-hero">
+        <div class="eyebrow" style="text-align:center">Balance</div>
+        <div class="amount tnum" id="my-balance">—</div><span class="denom">NXRL</span>
+        <div class="addr-row">
+          <span class="addr-chip mono" id="my-address">—</span>
+          <button class="icon-btn" onclick="copyAddress()" title="Copy address">⧉</button>
+        </div>
+        <div class="connmeta">
+          <span class="sub" style="font-size:11.5px;color:var(--dim-2)" id="conn-label">—</span>
+          <button class="link" onclick="offerSaveToDevice()" id="save-device-link" style="display:none">Save to this device</button>
+          <button class="link" onclick="disconnectWallet()">Disconnect</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="eyebrow">Send NXRL</div>
+      <div class="send-form">
+        <div class="field">
+          <label>Recipient address</label>
+          <input type="text" id="send-to" placeholder="nxr1...">
+        </div>
+        <div class="field">
+          <label>Amount</label>
+          <div class="field-row">
+            <input type="text" id="send-amount" placeholder="0.000000" inputmode="decimal">
+            <button class="maxbtn" onclick="setMax()">MAX</button>
           </div>
-          <div class="pill"><span class="dot ok"></span><span id="wallet-name">—</span></div>
+          <div class="hint">1 NXRL = 1,000,000 unxrl</div>
         </div>
-        <div style="margin-top:18px">
-          <div class="sub">Balance</div>
-          <div class="big" id="my-balance">—</div>
+        <div class="field">
+          <label>Memo (optional)</label>
+          <input type="text" id="send-memo" placeholder="">
         </div>
-        <button class="secondary" style="margin-top:14px" onclick="refreshBalance()">Refresh balance</button>
+        <button class="primary" id="send-btn" onclick="sendTokens()">Send</button>
+        <div id="send-status" class="status-box"></div>
       </div>
     </div>
-
-    <div class="card span12" id="send-card" style="display:none">
-      <h2>Send NXRL</h2>
-      <div class="field">
-        <label>Recipient address</label>
-        <input id="send-to" placeholder="nxr1...">
-      </div>
-      <div class="field">
-        <label>Amount (NXRL)</label>
-        <div class="field-row">
-          <input id="send-amount" placeholder="0.000000" inputmode="decimal">
-          <span class="maxlink" onclick="setMax()">max</span>
-        </div>
-        <div class="hint">1 NXRL = 1,000,000 unxrl. Up to 6 decimal places.</div>
-      </div>
-      <div class="field">
-        <label>Memo (optional)</label>
-        <input id="send-memo" placeholder="">
-      </div>
-      <button id="send-btn" onclick="sendTokens()">Send</button>
-      <div id="send-status" class="status"></div>
-    </div>
-
   </div>
 
   <footer>
-    Transfers are signed in your wallet extension and broadcast directly to the network — this page never sees your keys.
-    Network status polls <span class="kbd">mainnet-status.json</span>.
+    Transfers are signed locally — this page never transmits your keys.<br>
+    <a href="mainnet.html">Network status &amp; explorer</a>
   </footer>
+</div>
+
+<!-- Mnemonic reveal modal -->
+<div class="modal-backdrop" id="mnemonic-modal">
+  <div class="modal">
+    <h3>Your recovery phrase</h3>
+    <p class="sub">Write this down and store it somewhere safe. Anyone with these words can access your funds. NexaRail cannot recover it for you.</p>
+    <div class="mnemonic-grid" id="mnemonic-grid"></div>
+    <div class="confirm-row">
+      <input type="checkbox" id="mnemonic-confirm">
+      <label for="mnemonic-confirm" style="margin:0;text-transform:none;letter-spacing:0;font-size:13px;color:var(--dim);font-weight:400">I've saved my recovery phrase somewhere safe</label>
+    </div>
+    <div class="modal-actions">
+      <button class="primary" id="mnemonic-continue" disabled onclick="confirmMnemonicSaved()">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- Save-to-device passphrase modal -->
+<div class="modal-backdrop" id="save-device-modal">
+  <div class="modal">
+    <h3>Save to this device</h3>
+    <p class="sub">Your recovery phrase will be encrypted with this passphrase and stored in this browser only. You'll need the same passphrase to unlock it later.</p>
+    <div class="field">
+      <label>Choose a passphrase</label>
+      <input type="password" id="save-passphrase">
+    </div>
+    <div class="modal-actions">
+      <button class="ghost" onclick="closeModal('save-device-modal')">Cancel</button>
+      <button class="primary" onclick="confirmSaveToDevice()">Save</button>
+    </div>
+    <div id="save-device-error" class="status-box bad"></div>
+  </div>
+</div>
+
+<!-- Unlock modal -->
+<div class="modal-backdrop" id="unlock-modal">
+  <div class="modal">
+    <h3>Unlock saved wallet</h3>
+    <p class="sub">Enter the passphrase you used to save this wallet on this device.</p>
+    <div class="field">
+      <label>Passphrase</label>
+      <input type="password" id="unlock-passphrase">
+    </div>
+    <div class="modal-actions">
+      <button class="ghost" onclick="closeModal('unlock-modal')">Cancel</button>
+      <button class="primary" onclick="confirmUnlock()">Unlock</button>
+    </div>
+    <div id="unlock-error" class="status-box bad"></div>
+    <div style="margin-top:14px;text-align:center">
+      <button class="link" onclick="forgetDevice()">Forget this saved wallet</button>
+    </div>
+  </div>
 </div>
 
 <script type="module">
 import { SigningStargateClient, GasPrice } from "https://esm.sh/@cosmjs/stargate@0.32.4?bundle";
+import { DirectSecp256k1HdWallet } from "https://esm.sh/@cosmjs/proto-signing@0.32.4?bundle";
 
 const CHAIN_ID = "nexarail-mainnet-2";
 const RPC = "https://5-161-72-48.nip.io/rpc";
 const REST = "https://5-161-72-48.nip.io";
 const DENOM = "unxrl";
 const DECIMALS = 6;
+const PREFIX = "nxr";
+const VAULT_KEY = "nexarail_vault_v1";
 
 const chainInfo = {
   chainId: CHAIN_ID,
@@ -181,17 +399,24 @@ const chainInfo = {
   stakeCurrency: { coinDenom: "NXRL", coinMinimalDenom: DENOM, coinDecimals: DECIMALS },
 };
 
+const WALLETS = {
+  keplr: { name: "Keplr", get: () => window.keplr },
+  leap: { name: "Leap", get: () => window.leap },
+  cosmostation: { name: "Cosmostation", get: () => window.cosmostation && window.cosmostation.providers && window.cosmostation.providers.keplr },
+};
+
 let signingClient = null;
 let myAddress = null;
+let pendingMnemonic = null; // mnemonic awaiting user confirmation in the reveal modal
+let localSigner = null;     // DirectSecp256k1HdWallet, kept in memory only
 
-function fmt(n){return new Intl.NumberFormat('en-US').format(n)}
 function fmtNxrl(unxrl){return new Intl.NumberFormat('en-US',{maximumFractionDigits:6}).format(Number(unxrl)/1_000_000)}
+function fmt(n){return new Intl.NumberFormat('en-US').format(n)}
 function ago(iso){
   const s = (Date.now() - new Date(iso).getTime())/1000;
   if(s<60) return Math.round(s)+'s ago';
   if(s<3600) return Math.round(s/60)+'m ago';
-  if(s<86400) return Math.round(s/3600)+'h ago';
-  return Math.round(s/86400)+'d ago';
+  return Math.round(s/3600)+'h ago';
 }
 
 function nxrlToUnxrl(input){
@@ -204,52 +429,43 @@ function nxrlToUnxrl(input){
   return val;
 }
 
-// --- network status card (reuses mainnet-status.json for validator/bonded totals,
-// which only need to be roughly fresh; height/block-age poll the live RPC directly
-// since the cached feed only updates every 5 minutes and would otherwise show a
-// false "stalled" reading on every page load) ---
-async function refreshStatus(){
-  try{
-    const r = await fetch('mainnet-status.json?t=' + Date.now(), {cache:'no-store'});
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    const s = await r.json();
-    document.getElementById('val-count').textContent = s.active_validators;
-    document.getElementById('bonded-total').textContent = fmtNxrl(s.total_bonded_unxrl||0) + ' NXRL bonded';
-    document.getElementById('chain-id').textContent = s.chain_id;
-  }catch(e){
-    // non-fatal, live RPC poll below still covers height/freshness
-  }
-}
-
-async function refreshLiveHeight(){
-  const blockAgeEl = document.getElementById('block-age');
+// --- live network pill ---
+async function refreshNet(){
   try{
     const r = await fetch(RPC + '/status?t=' + Date.now(), {cache:'no-store'});
-    if(!r.ok) throw new Error('HTTP '+r.status);
+    if(!r.ok) throw new Error();
     const data = await r.json();
     const sync = data.result.sync_info;
-    document.getElementById('height').textContent = fmt(sync.latest_block_height);
     const ageS = (Date.now() - new Date(sync.latest_block_time).getTime())/1000;
-    blockAgeEl.innerHTML = '<span class="dot '+(ageS<15?'ok':ageS<60?'warn':'bad')+'"></span>' +
-      (sync.catching_up ? 'catching up' : ageS<15?'producing':ageS<60?'slow':'stalled') + ' · ' + ago(sync.latest_block_time);
+    document.getElementById('net-dot').className = 'dot ' + (sync.catching_up ? 'warn' : ageS<15?'ok':ageS<60?'warn':'bad');
+    document.getElementById('net-height').textContent = fmt(sync.latest_block_height);
   }catch(e){
-    blockAgeEl.innerHTML = '<span class="dot bad"></span>RPC unreachable';
+    document.getElementById('net-dot').className = 'dot bad';
+    document.getElementById('net-height').textContent = 'offline';
   }
 }
-refreshStatus();
-refreshLiveHeight();
-setInterval(refreshStatus, 30000);
-setInterval(refreshLiveHeight, 10000);
+refreshNet();
+setInterval(refreshNet, 10000);
 
-// --- wallet connect ---
-window.connectWallet = async function(wallet){
+// --- tabs ---
+window.switchTab = function(tab){
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.getElementById('panel-connect').style.display = tab === 'connect' ? 'block' : 'none';
+  document.getElementById('panel-create').style.display = tab === 'create' ? 'block' : 'none';
+  document.getElementById('panel-import').style.display = tab === 'import' ? 'block' : 'none';
+};
+
+function showModal(id){ document.getElementById(id).classList.add('show'); }
+window.closeModal = function(id){ document.getElementById(id).classList.remove('show'); };
+
+// --- extension connect (Keplr / Leap / Cosmostation-as-Keplr) ---
+window.connectExtension = async function(key){
   const errEl = document.getElementById('connect-error');
   errEl.style.display = 'none';
-  const provider = wallet === 'keplr' ? window.keplr : window.leap;
+  const w = WALLETS[key];
+  const provider = w.get();
   if(!provider){
-    errEl.textContent = wallet === 'keplr'
-      ? 'Keplr extension not detected. Install it from keplr.app first.'
-      : 'Leap extension not detected. Install it from leapwallet.io first.';
+    errEl.textContent = w.name + ' extension not detected. Install it, then reload this page.';
     errEl.style.display = 'block';
     return;
   }
@@ -258,23 +474,86 @@ window.connectWallet = async function(wallet){
     await provider.enable(CHAIN_ID);
     const signer = provider.getOfflineSigner(CHAIN_ID);
     const accounts = await signer.getAccounts();
-    myAddress = accounts[0].address;
-
-    signingClient = await SigningStargateClient.connectWithSigner(RPC, signer, {
-      gasPrice: GasPrice.fromString("0.001" + DENOM),
-    });
-
-    document.getElementById('my-address').textContent = myAddress;
-    document.getElementById('wallet-name').textContent = wallet === 'keplr' ? 'Keplr' : 'Leap';
-    document.getElementById('wallet-disconnected').style.display = 'none';
-    document.getElementById('wallet-connected').style.display = 'block';
-    document.getElementById('send-card').style.display = 'block';
-
-    await refreshBalance();
+    await activateSigner(signer, accounts[0].address, w.name, false);
   }catch(e){
     errEl.textContent = 'Connection failed: ' + (e.message || e);
     errEl.style.display = 'block';
   }
+};
+
+// --- create new local wallet ---
+window.createWallet = async function(){
+  const wallet = await DirectSecp256k1HdWallet.generate(24, { prefix: PREFIX });
+  pendingMnemonic = wallet.mnemonic;
+  localSigner = wallet;
+  renderMnemonicGrid(wallet.mnemonic);
+  document.getElementById('mnemonic-confirm').checked = false;
+  document.getElementById('mnemonic-continue').disabled = true;
+  showModal('mnemonic-modal');
+};
+
+function renderMnemonicGrid(mnemonic){
+  const words = mnemonic.split(' ');
+  const grid = document.getElementById('mnemonic-grid');
+  grid.innerHTML = words.map((w,i) => `<div class="mnemonic-word"><span class="n">${i+1}</span>${w}</div>`).join('');
+}
+
+document.getElementById('mnemonic-confirm').addEventListener('change', e => {
+  document.getElementById('mnemonic-continue').disabled = !e.target.checked;
+});
+
+window.confirmMnemonicSaved = async function(){
+  closeModal('mnemonic-modal');
+  const accounts = await localSigner.getAccounts();
+  await activateSigner(localSigner, accounts[0].address, 'Local wallet', true);
+};
+
+// --- import existing wallet ---
+window.importWallet = async function(){
+  const errEl = document.getElementById('import-error');
+  errEl.style.display = 'none';
+  const mnemonic = document.getElementById('import-mnemonic').value.trim().toLowerCase();
+  try{
+    const wordCount = mnemonic.split(/\s+/).length;
+    if(wordCount !== 12 && wordCount !== 24) throw new Error('Recovery phrase must be 12 or 24 words');
+    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: PREFIX });
+    localSigner = wallet;
+    const accounts = await wallet.getAccounts();
+    await activateSigner(wallet, accounts[0].address, 'Local wallet', true);
+  }catch(e){
+    errEl.textContent = 'Import failed: ' + (e.message || e);
+    errEl.style.display = 'block';
+  }
+};
+
+// --- activate a signer (extension or local) and switch to connected view ---
+async function activateSigner(signer, address, label, isLocal){
+  signingClient = await SigningStargateClient.connectWithSigner(RPC, signer, {
+    gasPrice: GasPrice.fromString("0.001" + DENOM),
+  });
+  myAddress = address;
+
+  document.getElementById('my-address').textContent = address;
+  document.getElementById('conn-label').textContent = label;
+  document.getElementById('save-device-link').style.display = isLocal ? 'inline' : 'none';
+  document.getElementById('view-disconnected').style.display = 'none';
+  document.getElementById('view-connected').style.display = 'block';
+
+  await refreshBalance();
+}
+
+window.disconnectWallet = function(){
+  signingClient = null;
+  myAddress = null;
+  localSigner = null;
+  pendingMnemonic = null;
+  document.getElementById('view-connected').style.display = 'none';
+  document.getElementById('view-disconnected').style.display = 'block';
+  checkSavedWallet();
+};
+
+window.copyAddress = function(){
+  if(myAddress) navigator.clipboard.writeText(myAddress);
 };
 
 window.refreshBalance = async function(){
@@ -283,18 +562,17 @@ window.refreshBalance = async function(){
     const r = await fetch(`${REST}/cosmos/bank/v1beta1/balances/${myAddress}`);
     const data = await r.json();
     const bal = (data.balances || []).find(b => b.denom === DENOM);
-    document.getElementById('my-balance').textContent = fmtNxrl(bal ? bal.amount : 0) + ' NXRL';
+    document.getElementById('my-balance').textContent = fmtNxrl(bal ? bal.amount : 0);
     window.__lastBalanceUnxrl = bal ? BigInt(bal.amount) : 0n;
   }catch(e){
-    document.getElementById('my-balance').textContent = 'unavailable';
+    document.getElementById('my-balance').textContent = '—';
   }
 };
 
 window.setMax = function(){
   const bal = window.__lastBalanceUnxrl || 0n;
   if(bal === 0n) return;
-  // leave a small buffer for gas
-  const buffer = 50000n; // 0.05 NXRL
+  const buffer = 50000n; // 0.05 NXRL gas buffer
   const spendable = bal > buffer ? bal - buffer : 0n;
   const whole = spendable / 1000000n;
   const frac = (spendable % 1000000n).toString().padStart(6, '0');
@@ -304,9 +582,6 @@ window.setMax = function(){
 window.sendTokens = async function(){
   const statusEl = document.getElementById('send-status');
   const btn = document.getElementById('send-btn');
-  statusEl.className = 'status pending';
-  statusEl.textContent = '';
-
   const to = document.getElementById('send-to').value.trim();
   const amountStr = document.getElementById('send-amount').value.trim();
   const memo = document.getElementById('send-memo').value.trim();
@@ -317,33 +592,115 @@ window.sendTokens = async function(){
     const amountUnxrl = nxrlToUnxrl(amountStr);
 
     btn.disabled = true;
-    statusEl.className = 'status pending';
+    statusEl.className = 'status-box pending';
     statusEl.textContent = 'Broadcasting...';
 
     const result = await signingClient.sendTokens(
-      myAddress,
-      to,
-      [{ denom: DENOM, amount: amountUnxrl.toString() }],
-      "auto",
-      memo
+      myAddress, to, [{ denom: DENOM, amount: amountUnxrl.toString() }], "auto", memo
     );
-
     if(result.code && result.code !== 0){
       throw new Error('Tx failed on-chain (code ' + result.code + '): ' + (result.rawLog || ''));
     }
-
-    statusEl.className = 'status ok';
-    statusEl.innerHTML = 'Sent. Tx hash: <span class="addr">' + result.transactionHash + '</span>';
+    statusEl.className = 'status-box ok';
+    statusEl.innerHTML = 'Sent. Tx hash: <span class="mono">' + result.transactionHash + '</span>';
     document.getElementById('send-amount').value = '';
     document.getElementById('send-memo').value = '';
     await refreshBalance();
   }catch(e){
-    statusEl.className = 'status bad';
+    statusEl.className = 'status-box bad';
     statusEl.textContent = 'Failed: ' + (e.message || e);
   }finally{
     btn.disabled = false;
   }
 };
+
+// --- encrypted local-device save/unlock (local wallets only) ---
+async function deriveKey(passphrase, salt){
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 200000, hash: 'SHA-256' },
+    keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt','decrypt']
+  );
+}
+function b64(bytes){ return btoa(String.fromCharCode(...bytes)); }
+function unb64(str){ return Uint8Array.from(atob(str), c => c.charCodeAt(0)); }
+
+window.offerSaveToDevice = function(){
+  document.getElementById('save-device-error').style.display = 'none';
+  document.getElementById('save-passphrase').value = '';
+  showModal('save-device-modal');
+};
+
+window.confirmSaveToDevice = async function(){
+  const errEl = document.getElementById('save-device-error');
+  const passphrase = document.getElementById('save-passphrase').value;
+  if(!passphrase || passphrase.length < 6){
+    errEl.textContent = 'Use a passphrase of at least 6 characters.';
+    errEl.style.display = 'block';
+    return;
+  }
+  try{
+    const mnemonic = localSigner.mnemonic;
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await deriveKey(passphrase, salt);
+    const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(mnemonic));
+    localStorage.setItem(VAULT_KEY, JSON.stringify({
+      salt: b64(salt), iv: b64(iv), data: b64(new Uint8Array(ciphertext)),
+    }));
+    closeModal('save-device-modal');
+    document.getElementById('save-device-link').textContent = 'Saved to this device ✓';
+    document.getElementById('save-device-link').disabled = true;
+  }catch(e){
+    errEl.textContent = 'Failed to save: ' + (e.message || e);
+    errEl.style.display = 'block';
+  }
+};
+
+function checkSavedWallet(){
+  const raw = localStorage.getItem(VAULT_KEY);
+  document.getElementById('saved-wallet-card').style.display = raw ? 'block' : 'none';
+}
+
+window.openUnlockModal = function(){
+  document.getElementById('unlock-error').style.display = 'none';
+  document.getElementById('unlock-passphrase').value = '';
+  showModal('unlock-modal');
+};
+
+window.confirmUnlock = async function(){
+  const errEl = document.getElementById('unlock-error');
+  const passphrase = document.getElementById('unlock-passphrase').value;
+  try{
+    const raw = localStorage.getItem(VAULT_KEY);
+    if(!raw) throw new Error('No saved wallet found');
+    const vault = JSON.parse(raw);
+    const key = await deriveKey(passphrase, unb64(vault.salt));
+    const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(vault.iv) }, key, unb64(vault.data));
+    const mnemonic = new TextDecoder().decode(plain);
+    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: PREFIX });
+    localSigner = wallet;
+    const accounts = await wallet.getAccounts();
+    closeModal('unlock-modal');
+    await activateSigner(wallet, accounts[0].address, 'Local wallet', true);
+    document.getElementById('save-device-link').textContent = 'Saved to this device ✓';
+    document.getElementById('save-device-link').disabled = true;
+  }catch(e){
+    errEl.textContent = 'Wrong passphrase or corrupted data.';
+    errEl.style.display = 'block';
+  }
+};
+
+window.forgetDevice = function(){
+  if(confirm('Remove the encrypted wallet saved in this browser? This cannot be undone — make sure you have your recovery phrase saved elsewhere.')){
+    localStorage.removeItem(VAULT_KEY);
+    closeModal('unlock-modal');
+    checkSavedWallet();
+  }
+};
+
+checkSavedWallet();
 </script>
 </body>
 </html>
