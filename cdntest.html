@@ -4,15 +4,15 @@ window.__results = {};
 async function test(name, url) {
   try {
     const m = await import(url);
-    window.__results[name] = { ok: true, hasClient: !!m.SigningStargateClient };
+    window.__results[name] = { ok: true, keys: Object.keys(m).slice(0,5) };
   } catch(e) {
     window.__results[name] = { ok: false, error: String(e && e.message || e) };
   }
 }
 await Promise.all([
-  test('bundle', 'https://esm.sh/@cosmjs/stargate@0.32.4?bundle'),
-  test('nobundle', 'https://esm.sh/@cosmjs/stargate@0.32.4'),
-  test('bundle-deps', 'https://esm.sh/@cosmjs/stargate@0.32.4?bundle-deps'),
+  test('stargate', 'https://esm.sh/@cosmjs/stargate@0.32.4?bundle'),
+  test('protosigning', 'https://esm.sh/@cosmjs/proto-signing@0.32.4?bundle'),
+  test('qrcode', 'https://esm.sh/qrcode@1.5.3?bundle'),
 ]);
 window.__done = true;
 </script>
