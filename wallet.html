@@ -81,7 +81,7 @@ async function addChain(wallet) {
   try {
     await provider.experimentalSuggestChain(chainInfo);
     await provider.enable(chainInfo.chainId);
-    statusEl.textContent = 'NexaRail added successfully! Check your wallet.';
+    statusEl.innerHTML = 'NexaRail added successfully! <a href="app.html" style="color:#f5a623">Open the wallet dashboard &rarr;</a>';
   } catch (e) {
     statusEl.className = 'error';
     statusEl.textContent = 'Failed: ' + (e.message || e);
