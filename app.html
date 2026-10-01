@@ -144,6 +144,37 @@ button.link:hover{color:var(--txt)}
 .connmeta{display:flex;justify-content:center;gap:16px;margin-top:18px}
 .connmeta button.link{font-size:11.5px}
 
+/* action row (Receive / Send) */
+.action-tabs{display:flex;gap:10px;margin:22px 0 0}
+.action-tab{
+  flex:1;background:var(--panel);border:1px solid var(--line);color:var(--txt);
+  font-family:inherit;font-size:13px;font-weight:700;padding:13px;border-radius:12px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;
+}
+.action-tab svg{width:15px;height:15px}
+.action-tab:hover{border-color:rgba(232,171,47,.4)}
+.action-tab.active{background:linear-gradient(135deg,var(--gold-1),var(--gold-2));color:#1c1300;border-color:transparent}
+
+/* receive panel */
+.qr-wrap{display:flex;flex-direction:column;align-items:center;padding:8px 0 4px}
+.qr-box{background:#fff;padding:16px;border-radius:16px;line-height:0}
+.qr-box canvas{display:block;border-radius:4px}
+.receive-addr{margin-top:20px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--txt);text-align:center;word-break:break-all;line-height:1.6}
+.receive-note{font-size:12px;color:var(--dim-2);text-align:center;margin-top:10px;max-width:320px}
+
+/* giant amount input (send) */
+.amount-card{background:#0a0c0e;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:12px}
+.amount-card label{margin-bottom:10px}
+.amount-input-row{display:flex;align-items:baseline;gap:10px}
+.amount-input{
+  flex:1;background:none;border:none;color:var(--txt);font-family:'Inter',sans-serif;
+  font-size:40px;font-weight:700;letter-spacing:-.01em;padding:0;width:100%;
+}
+.amount-input:focus{outline:none}
+.amount-input::placeholder{color:var(--dim-2)}
+.amount-denom{font-size:16px;font-weight:700;color:var(--dim)}
+.amount-sub{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;color:var(--dim-2)}
+
 .send-form .field-row{display:flex;gap:8px}
 .field-row input{flex:1}
 .maxbtn{
@@ -151,6 +182,31 @@ button.link:hover{color:var(--txt)}
   border:none;border-radius:7px;padding:0 14px;cursor:pointer;
 }
 .hint{font-size:11.5px;color:var(--dim-2);margin-top:6px}
+
+/* review step */
+.review-row{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);gap:16px}
+.review-row:last-child{border-bottom:none}
+.review-row .k{font-size:12px;color:var(--dim-2);white-space:nowrap}
+.review-row .v{font-size:13px;color:var(--txt);text-align:right;font-family:'JetBrains Mono',monospace;word-break:break-all}
+.review-actions{display:flex;gap:10px;margin-top:20px}
+.review-actions button{flex:1}
+
+/* activity */
+.activity-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line);gap:12px}
+.activity-row:last-child{border-bottom:none}
+.activity-left{display:flex;align-items:center;gap:12px;min-width:0}
+.activity-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.activity-icon.out{background:rgba(239,68,68,.12);color:#f87171}
+.activity-icon.in{background:rgba(34,197,94,.12);color:#4ade80}
+.activity-meta{min-width:0}
+.activity-meta .dir{font-size:13px;font-weight:600}
+.activity-meta .cp{font-size:11.5px;color:var(--dim-2);font-family:'JetBrains Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
+.activity-right{text-align:right;flex-shrink:0}
+.activity-right .amt{font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace}
+.activity-right .amt.out{color:#f87171}
+.activity-right .amt.in{color:#4ade80}
+.activity-right .t{font-size:11px;color:var(--dim-2);margin-top:2px}
+.activity-empty{font-size:13px;color:var(--dim-2);text-align:center;padding:14px 0}
 
 .status-box{padding:15px 18px;border-radius:11px;font-size:13px;margin-top:16px;display:none;word-break:break-all;line-height:1.6}
 .status-box.ok{display:block;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);color:#4ade80}
@@ -279,30 +335,69 @@ footer a:hover{color:var(--dim)}
           <button class="link" onclick="disconnectWallet()">Disconnect</button>
         </div>
       </div>
+      <div class="action-tabs">
+        <button class="action-tab" data-atab="receive" onclick="switchActionTab('receive')">Receive</button>
+        <button class="action-tab active" data-atab="send" onclick="switchActionTab('send')">Send</button>
+      </div>
     </div>
 
-    <div class="card">
+    <!-- RECEIVE -->
+    <div class="card" id="panel-receive" style="display:none">
+      <div class="eyebrow" style="text-align:center">Receive NXRL</div>
+      <div class="qr-wrap">
+        <div class="qr-box"><canvas id="receive-qr"></canvas></div>
+        <div class="receive-addr" id="receive-address">—</div>
+        <div class="receive-note">Share this address to receive NXRL. Any Cosmos-SDK wallet can send to it directly.</div>
+        <button class="ghost" style="width:auto;margin-top:16px" onclick="copyAddress()">Copy address</button>
+      </div>
+    </div>
+
+    <!-- SEND (amount entry) -->
+    <div class="card" id="panel-send">
       <div class="eyebrow">Send NXRL</div>
-      <div class="send-form">
+      <div class="send-form" id="send-form-step">
         <div class="field">
           <label>Recipient address</label>
           <input type="text" id="send-to" placeholder="nxr1...">
         </div>
-        <div class="field">
+        <div class="amount-card">
           <label>Amount</label>
-          <div class="field-row">
-            <input type="text" id="send-amount" placeholder="0.000000" inputmode="decimal">
+          <div class="amount-input-row">
+            <input type="text" class="amount-input tnum" id="send-amount" placeholder="0.00" inputmode="decimal">
+            <span class="amount-denom">NXRL</span>
+          </div>
+          <div class="amount-sub">
+            <span>Balance: <span id="send-balance-hint">—</span> NXRL</span>
             <button class="maxbtn" onclick="setMax()">MAX</button>
           </div>
-          <div class="hint">1 NXRL = 1,000,000 unxrl</div>
         </div>
         <div class="field">
           <label>Memo (optional)</label>
           <input type="text" id="send-memo" placeholder="">
         </div>
-        <button class="primary" id="send-btn" onclick="sendTokens()">Send</button>
+        <button class="primary" id="review-btn" onclick="reviewSend()">Review</button>
         <div id="send-status" class="status-box"></div>
       </div>
+
+      <!-- SEND (review / confirm step) -->
+      <div id="send-review-step" style="display:none">
+        <div class="review-row"><span class="k">From</span><span class="v" id="rv-from">—</span></div>
+        <div class="review-row"><span class="k">To</span><span class="v" id="rv-to">—</span></div>
+        <div class="review-row"><span class="k">Amount</span><span class="v" id="rv-amount">—</span></div>
+        <div class="review-row"><span class="k">Network fee</span><span class="v" id="rv-fee">—</span></div>
+        <div class="review-row" id="rv-memo-row" style="display:none"><span class="k">Memo</span><span class="v" id="rv-memo">—</span></div>
+        <div class="review-actions">
+          <button class="ghost" onclick="cancelReview()">Back</button>
+          <button class="primary" id="confirm-send-btn" onclick="confirmSend()">Confirm &amp; Send</button>
+        </div>
+        <div id="confirm-status" class="status-box"></div>
+      </div>
+    </div>
+
+    <!-- ACTIVITY -->
+    <div class="card" id="panel-activity">
+      <div class="eyebrow">Recent activity</div>
+      <div id="activity-list"><div class="activity-empty">Loading...</div></div>
     </div>
   </div>
 
@@ -366,8 +461,9 @@ footer a:hover{color:var(--dim)}
 </div>
 
 <script type="module">
-import { SigningStargateClient, GasPrice } from "https://esm.sh/@cosmjs/stargate@0.32.4?bundle";
+import { SigningStargateClient, GasPrice, calculateFee } from "https://esm.sh/@cosmjs/stargate@0.32.4?bundle";
 import { DirectSecp256k1HdWallet } from "https://esm.sh/@cosmjs/proto-signing@0.32.4?bundle";
+import QRCode from "https://esm.sh/qrcode@1.5.3?bundle";
 
 const CHAIN_ID = "nexarail-mainnet-2";
 const RPC = "https://5-161-72-48.nip.io/rpc";
@@ -458,6 +554,12 @@ window.switchTab = function(tab){
 function showModal(id){ document.getElementById(id).classList.add('show'); }
 window.closeModal = function(id){ document.getElementById(id).classList.remove('show'); };
 
+window.switchActionTab = function(tab){
+  document.querySelectorAll('.action-tab').forEach(t => t.classList.toggle('active', t.dataset.atab === tab));
+  document.getElementById('panel-receive').style.display = tab === 'receive' ? 'block' : 'none';
+  document.getElementById('panel-send').style.display = tab === 'send' ? 'block' : 'none';
+};
+
 // --- extension connect (Keplr / Leap / Cosmostation-as-Keplr) ---
 window.connectExtension = async function(key){
   const errEl = document.getElementById('connect-error');
@@ -534,12 +636,19 @@ async function activateSigner(signer, address, label, isLocal){
   myAddress = address;
 
   document.getElementById('my-address').textContent = address;
+  document.getElementById('receive-address').textContent = address;
   document.getElementById('conn-label').textContent = label;
   document.getElementById('save-device-link').style.display = isLocal ? 'inline' : 'none';
   document.getElementById('view-disconnected').style.display = 'none';
   document.getElementById('view-connected').style.display = 'block';
+  switchActionTab('send');
+  cancelReview();
+
+  const canvas = document.getElementById('receive-qr');
+  QRCode.toCanvas(canvas, address, { width: 200, margin: 1, color: { dark: '#07080a', light: '#ffffff' } });
 
   await refreshBalance();
+  await loadActivity();
 }
 
 window.disconnectWallet = function(){
@@ -547,6 +656,7 @@ window.disconnectWallet = function(){
   myAddress = null;
   localSigner = null;
   pendingMnemonic = null;
+  pendingSend = null;
   document.getElementById('view-connected').style.display = 'none';
   document.getElementById('view-disconnected').style.display = 'block';
   checkSavedWallet();
@@ -562,10 +672,87 @@ window.refreshBalance = async function(){
     const r = await fetch(`${REST}/cosmos/bank/v1beta1/balances/${myAddress}`);
     const data = await r.json();
     const bal = (data.balances || []).find(b => b.denom === DENOM);
-    document.getElementById('my-balance').textContent = fmtNxrl(bal ? bal.amount : 0);
+    const display = fmtNxrl(bal ? bal.amount : 0);
+    document.getElementById('my-balance').textContent = display;
+    document.getElementById('send-balance-hint').textContent = display;
     window.__lastBalanceUnxrl = bal ? BigInt(bal.amount) : 0n;
   }catch(e){
     document.getElementById('my-balance').textContent = '—';
+  }
+};
+
+// --- recent activity (merges sent + received via RPC tx_search; REST tx-events
+// endpoint returns "Not Implemented" on this chain's gateway build, so RPC is used) ---
+async function rpcTxSearch(query){
+  const url = `${RPC}/tx_search?query=${encodeURIComponent('"' + query + '"')}&order_by=%22desc%22&per_page=5`;
+  const r = await fetch(url);
+  if(!r.ok) throw new Error('HTTP ' + r.status);
+  const data = await r.json();
+  return (data.result && data.result.txs) || [];
+}
+
+function parseSendTx(tx, myAddr){
+  try{
+    const logs = JSON.parse(tx.tx_result.log);
+    for(const entry of logs){
+      const transferEvt = entry.events.find(e => e.type === 'transfer');
+      if(!transferEvt) continue;
+      const attrs = transferEvt.attributes;
+      const recipient = attrs.find(a => a.key === 'recipient')?.value;
+      const sender = attrs.find(a => a.key === 'sender')?.value;
+      const amountRaw = attrs.find(a => a.key === 'amount')?.value || '';
+      const m = amountRaw.match(/^(\d+)unxrl/);
+      if(!m) continue;
+      const isOut = sender === myAddr;
+      const isIn = recipient === myAddr;
+      if(!isOut && !isIn) continue;
+      return {
+        hash: tx.hash, height: tx.height, amount: m[1],
+        direction: isOut ? 'out' : 'in',
+        counterparty: isOut ? recipient : sender,
+      };
+    }
+  }catch(e){ /* unparseable log, skip */ }
+  return null;
+}
+
+window.loadActivity = async function(){
+  const listEl = document.getElementById('activity-list');
+  if(!myAddress) return;
+  try{
+    const [sent, received] = await Promise.all([
+      rpcTxSearch(`message.sender='${myAddress}'`),
+      rpcTxSearch(`transfer.recipient='${myAddress}'`),
+    ]);
+    const byHash = new Map();
+    [...sent, ...received].forEach(tx => byHash.set(tx.hash, tx));
+    const merged = [...byHash.values()]
+      .map(tx => parseSendTx(tx, myAddress))
+      .filter(Boolean)
+      .sort((a,b) => Number(b.height) - Number(a.height))
+      .slice(0, 5);
+
+    if(merged.length === 0){
+      listEl.innerHTML = '<div class="activity-empty">No transactions yet</div>';
+      return;
+    }
+    listEl.innerHTML = merged.map(tx => `
+      <div class="activity-row">
+        <div class="activity-left">
+          <div class="activity-icon ${tx.direction}">${tx.direction === 'out' ? '↑' : '↓'}</div>
+          <div class="activity-meta">
+            <div class="dir">${tx.direction === 'out' ? 'Sent' : 'Received'}</div>
+            <div class="cp">${tx.direction === 'out' ? 'to ' : 'from '}${tx.counterparty}</div>
+          </div>
+        </div>
+        <div class="activity-right">
+          <div class="amt ${tx.direction}">${tx.direction === 'out' ? '-' : '+'}${fmtNxrl(tx.amount)}</div>
+          <div class="t">#${fmt(tx.height)}</div>
+        </div>
+      </div>
+    `).join('');
+  }catch(e){
+    listEl.innerHTML = '<div class="activity-empty">Activity unavailable</div>';
   }
 };
 
@@ -579,9 +766,12 @@ window.setMax = function(){
   document.getElementById('send-amount').value = `${whole}.${frac}`.replace(/\.?0+$/, '') || '0';
 };
 
-window.sendTokens = async function(){
+let pendingSend = null; // { to, amountUnxrl, memo, fee }
+
+window.reviewSend = async function(){
   const statusEl = document.getElementById('send-status');
-  const btn = document.getElementById('send-btn');
+  const btn = document.getElementById('review-btn');
+  statusEl.style.display = 'none';
   const to = document.getElementById('send-to').value.trim();
   const amountStr = document.getElementById('send-amount').value.trim();
   const memo = document.getElementById('send-memo').value.trim();
@@ -592,12 +782,58 @@ window.sendTokens = async function(){
     const amountUnxrl = nxrlToUnxrl(amountStr);
 
     btn.disabled = true;
+    btn.textContent = 'Estimating fee...';
+
+    const msg = {
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: { fromAddress: myAddress, toAddress: to, amount: [{ denom: DENOM, amount: amountUnxrl.toString() }] },
+    };
+    const gasEstimate = await signingClient.simulate(myAddress, [msg], memo);
+    const gasLimit = Math.round(gasEstimate * 1.4);
+    const fee = calculateFee(gasLimit, GasPrice.fromString("0.001" + DENOM));
+
+    pendingSend = { to, amountUnxrl, memo, fee, msg };
+
+    document.getElementById('rv-from').textContent = myAddress;
+    document.getElementById('rv-to').textContent = to;
+    document.getElementById('rv-amount').textContent = fmtNxrl(amountUnxrl.toString()) + ' NXRL';
+    document.getElementById('rv-fee').textContent = fmtNxrl(fee.amount[0].amount) + ' NXRL';
+    const memoRow = document.getElementById('rv-memo-row');
+    if(memo){ memoRow.style.display = 'flex'; document.getElementById('rv-memo').textContent = memo; }
+    else { memoRow.style.display = 'none'; }
+
+    document.getElementById('send-form-step').style.display = 'none';
+    document.getElementById('send-review-step').style.display = 'block';
+  }catch(e){
+    statusEl.className = 'status-box bad';
+    statusEl.textContent = 'Failed: ' + (e.message || e);
+    statusEl.style.display = 'block';
+  }finally{
+    btn.disabled = false;
+    btn.textContent = 'Review';
+  }
+};
+
+window.cancelReview = function(){
+  pendingSend = null;
+  document.getElementById('send-form-step').style.display = 'block';
+  document.getElementById('send-review-step').style.display = 'none';
+  document.getElementById('confirm-status').style.display = 'none';
+};
+
+window.confirmSend = async function(){
+  const statusEl = document.getElementById('confirm-status');
+  const btn = document.getElementById('confirm-send-btn');
+  if(!pendingSend) return;
+
+  try{
+    btn.disabled = true;
     statusEl.className = 'status-box pending';
     statusEl.textContent = 'Broadcasting...';
+    statusEl.style.display = 'block';
 
-    const result = await signingClient.sendTokens(
-      myAddress, to, [{ denom: DENOM, amount: amountUnxrl.toString() }], "auto", memo
-    );
+    const { msg, fee, memo } = pendingSend;
+    const result = await signingClient.signAndBroadcast(myAddress, [msg], fee, memo);
     if(result.code && result.code !== 0){
       throw new Error('Tx failed on-chain (code ' + result.code + '): ' + (result.rawLog || ''));
     }
@@ -605,7 +841,10 @@ window.sendTokens = async function(){
     statusEl.innerHTML = 'Sent. Tx hash: <span class="mono">' + result.transactionHash + '</span>';
     document.getElementById('send-amount').value = '';
     document.getElementById('send-memo').value = '';
+    document.getElementById('send-to').value = '';
+    pendingSend = null;
     await refreshBalance();
+    await loadActivity();
   }catch(e){
     statusEl.className = 'status-box bad';
     statusEl.textContent = 'Failed: ' + (e.message || e);
