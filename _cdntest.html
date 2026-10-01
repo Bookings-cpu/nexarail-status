@@ -1,0 +1,19 @@
+<!doctype html><html><body>
+<script type="module">
+window.__results = {};
+async function test(name, url) {
+  try {
+    const m = await import(url);
+    window.__results[name] = { ok: true, hasClient: !!m.SigningStargateClient };
+  } catch(e) {
+    window.__results[name] = { ok: false, error: String(e && e.message || e) };
+  }
+}
+await Promise.all([
+  test('bundle', 'https://esm.sh/@cosmjs/stargate@0.32.4?bundle'),
+  test('nobundle', 'https://esm.sh/@cosmjs/stargate@0.32.4'),
+  test('bundle-deps', 'https://esm.sh/@cosmjs/stargate@0.32.4?bundle-deps'),
+]);
+window.__done = true;
+</script>
+</body></html>
