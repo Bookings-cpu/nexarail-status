@@ -204,28 +204,42 @@ function nxrlToUnxrl(input){
   return val;
 }
 
-// --- network status card (reuses mainnet-status.json) ---
+// --- network status card (reuses mainnet-status.json for validator/bonded totals,
+// which only need to be roughly fresh; height/block-age poll the live RPC directly
+// since the cached feed only updates every 5 minutes and would otherwise show a
+// false "stalled" reading on every page load) ---
 async function refreshStatus(){
   try{
     const r = await fetch('mainnet-status.json?t=' + Date.now(), {cache:'no-store'});
     if(!r.ok) throw new Error('HTTP '+r.status);
     const s = await r.json();
-    document.getElementById('height').textContent = fmt(s.height);
     document.getElementById('val-count').textContent = s.active_validators;
     document.getElementById('bonded-total').textContent = fmtNxrl(s.total_bonded_unxrl||0) + ' NXRL bonded';
     document.getElementById('chain-id').textContent = s.chain_id;
-    const blockAgeEl = document.getElementById('block-age');
-    if(s.block_time){
-      const ageS = (Date.now() - new Date(s.block_time).getTime())/1000;
-      blockAgeEl.innerHTML = '<span class="dot '+(ageS<15?'ok':ageS<60?'warn':'bad')+'"></span>' +
-        (ageS<15?'producing':ageS<60?'slow':'stalled') + ' · ' + ago(s.block_time);
-    }
   }catch(e){
-    document.getElementById('block-age').innerHTML = '<span class="dot bad"></span>status feed unreachable';
+    // non-fatal, live RPC poll below still covers height/freshness
+  }
+}
+
+async function refreshLiveHeight(){
+  const blockAgeEl = document.getElementById('block-age');
+  try{
+    const r = await fetch(RPC + '/status?t=' + Date.now(), {cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data = await r.json();
+    const sync = data.result.sync_info;
+    document.getElementById('height').textContent = fmt(sync.latest_block_height);
+    const ageS = (Date.now() - new Date(sync.latest_block_time).getTime())/1000;
+    blockAgeEl.innerHTML = '<span class="dot '+(ageS<15?'ok':ageS<60?'warn':'bad')+'"></span>' +
+      (sync.catching_up ? 'catching up' : ageS<15?'producing':ageS<60?'slow':'stalled') + ' · ' + ago(sync.latest_block_time);
+  }catch(e){
+    blockAgeEl.innerHTML = '<span class="dot bad"></span>RPC unreachable';
   }
 }
 refreshStatus();
+refreshLiveHeight();
 setInterval(refreshStatus, 30000);
+setInterval(refreshLiveHeight, 10000);
 
 // --- wallet connect ---
 window.connectWallet = async function(wallet){
