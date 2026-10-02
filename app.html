@@ -706,7 +706,7 @@ async function consAddrFromPubkey(b64){
 }
 function valRow(v, total){
   const pct = total ? (Number(v.tokens)/total*100) : 0; const hue = hueFor(v.description.moniker);
-  return `<div class="val"><span class="n"><i class="vdot" style="color:hsl(${hue} 80% 60%);background:hsl(${hue} 80% 60%)"></i><span>${v.description.moniker}</span></span><span class="bar"><i data-w="${pct.toFixed(2)}"></i></span><span class="pct">${pct.toFixed(1)}%</span><span class="com">${(Number(v.commission.commission_rates.rate)*100).toFixed(0)}%</span></div>`;
+  return `<div class="val"><span class="n"><i class="vdot" style="color:hsl(${hue} 80% 60%);background:hsl(${hue} 80% 60%)"></i><span>${v.description.moniker}</span></span><span class="bar"><i data-w="${pct.toFixed(2)}"></i></span><span class="pct">${pct < 0.1 ? '&lt;0.1' : pct.toFixed(1)}%</span><span class="com">${(Number(v.commission.commission_rates.rate)*100).toFixed(0)}%</span></div>`;
 }
 async function refreshValidators(){
   try{
