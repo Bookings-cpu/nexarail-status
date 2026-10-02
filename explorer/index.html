@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/nexarail-status/explorer/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://v1.slise.xyz" crossorigin />
+    <link rel="dns-prefetch" href="https://v1.slise.xyz" />
+    <link rel="preload" href="https://v1.slise.xyz/scripts/embed.js" as="script" />
+    <title>Ping Dashboard - Cosmos Blockchain Explorer And Web Wallet</title>
+    <meta
+      name="description"
+      content="Ping Dashboard is a block explorer/web wallet for blockchains built on Cosmos SDK, Cosmoshub, Osmosis, Juno, Evmos, Injective, Canto and 70+ blockchains listed on ping.pub"
+    />
+    <link rel="stylesheet" type="text/css" href="/nexarail-status/explorer/loader.css" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://cdn.jsdelivr.net https://*.ping.pub https://v1.slise.xyz; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; img-src 'self' data: https:; connect-src 'self' https: http: data:; frame-src 'self' https://wallet.keplr.app https://*.slise.xyz; font-src 'self' data: https://fonts.gstatic.com;"
+    />
+    <script type="module" crossorigin src="/nexarail-status/explorer/assets/index-865a3e4c.js"></script>
+    <link rel="stylesheet" href="/nexarail-status/explorer/assets/index-5c258eb9.css">
+  </head>
+  <body>
+    <div id="app">
+      <div id="loading-bg">
+        <div class="loading-logo">
+          <img src="/nexarail-status/explorer/logo.svg" alt="Logo" />
+        </div>
+        <div class="pre-loading">
+          <div class="effect-1 effects"></div>
+          <div class="effect-2 effects"></div>
+          <div class="effect-3 effects"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-SSBKVF3GMX"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      // Set default consent to 'denied' as a placeholder
+      // Determine actual values based on your own requirements
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+      });
+      gtag('config', 'G-SSBKVF3GMX');
+    </script>
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@ping-pub/widget@0.3.12/dist/widget.min.js"
+      integrity="sha384-qKDWL/dPjkTzqn43/+vE52grvtXBgPxy7lPW+vxnjpOn9zJuHiu4DJ2TR3FrlPB5"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

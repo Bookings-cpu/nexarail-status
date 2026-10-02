@@ -1,0 +1,1 @@
+var e=Object.defineProperty||!1;if(e)try{e({},"a",{value:1})}catch{e=!1}var n=e,r=n,a=function(){return!!r};a.hasArrayLengthDefineBug=function(){if(!r)return null;try{return r([],"length",{value:1}).length!==1}catch{return!0}};var i=a;export{n as e,i as h};
