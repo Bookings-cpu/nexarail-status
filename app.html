@@ -4,522 +4,487 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NexaRail Wallet</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23c9971f'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23f0b90b'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f3f2ee;
-  --panel:#ffffff;
-  --line:#e6e3dd;
-  --line-soft:#efede8;
-  --txt:#13141a;
-  --dim:#6b6d72;
-  --dim-2:#9a9ca1;
-  --ok:#15803d;
-  --ok-bg:#f0fdf4;
-  --warn:#b45309;
-  --warn-bg:#fffbeb;
-  --bad:#b91c1c;
-  --bad-bg:#fef2f2;
-  --gold-1:#f3cf7a;
-  --gold-2:#c9971f;
-  --ink:#0e0f13;
-  --radius:18px;
-  --shadow:0 1px 2px rgba(20,20,15,.04), 0 16px 32px -20px rgba(20,20,15,.18);
+  --bg:#0b0e11;
+  --panel:#14181c;
+  --panel-2:#1b2027;
+  --line:#272c33;
+  --line-soft:#1e2329;
+  --txt:#eaecef;
+  --dim:#848e9c;
+  --dim-2:#5e6673;
+  --ok:#0ecb81;
+  --ok-bg:rgba(14,203,129,.1);
+  --bad:#f6465d;
+  --bad-bg:rgba(246,70,93,.1);
+  --gold:#f0b90b;
+  --gold-dim:#8a6d0a;
+  --radius:12px;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
+  background:var(--bg);
   color:var(--txt);
-  font:15px/1.5 'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  font:14px/1.5 'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
   min-height:100vh;
   -webkit-font-smoothing:antialiased;
-  background-color:var(--bg);
-  background-image:
-    radial-gradient(900px 500px at 15% -10%, rgba(201,151,31,.10), transparent 60%),
-    radial-gradient(700px 500px at 110% 10%, rgba(201,151,31,.07), transparent 60%);
-  background-attachment:fixed;
 }
 .mono{font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
 .tnum{font-feature-settings:'tnum' 1;font-variant-numeric:tabular-nums}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.fade-in{animation:fadeUp .32s cubic-bezier(.16,1,.3,1) both}
-@keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.4}}
+.fade-in{animation:fadeUp .28s cubic-bezier(.16,1,.3,1) both}
 @keyframes shimmer{0%{background-position:-200px 0}100%{background-position:200px 0}}
-.skeleton{background:linear-gradient(90deg,var(--line-soft) 0%,#fff 50%,var(--line-soft) 100%);background-size:200px 100%;animation:shimmer 1.4s ease-in-out infinite;border-radius:6px;color:transparent!important}
+.skeleton{background:linear-gradient(90deg,var(--line-soft) 0%,#262b32 50%,var(--line-soft) 100%);background-size:200px 100%;animation:shimmer 1.3s ease-in-out infinite;border-radius:6px;color:transparent!important}
 
-/* top bar */
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  max-width:720px;margin:0 auto;padding:26px 24px 0;
-}
-.brand{font-size:17px;font-weight:800;letter-spacing:-.01em;color:var(--ink)}
-.brand span{background:linear-gradient(135deg,var(--gold-2),#8a6a10);-webkit-background-clip:text;background-clip:text;color:transparent}
-.topbar a.explink{font-size:12.5px;color:var(--dim);text-decoration:none;font-weight:500}
-.topbar a.explink:hover{color:var(--txt)}
-.dot{display:inline-block;width:7px;height:7px;border-radius:50%}
-.dot.ok{background:var(--ok);animation:pulseDot 2s ease-in-out infinite}
-.dot.warn{background:var(--warn)}
-.dot.bad{background:var(--bad)}
-.dot.dim{background:var(--dim-2)}
+/* ===== shell: sidebar + main, exchange-platform layout ===== */
+.shell{display:flex;min-height:100vh}
 
-/* --- network pulse: the "living breathing network" hero --- */
-.pulse-card{
-  max-width:720px;margin:20px auto 0;padding:0 24px;
+.sidebar{
+  width:224px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;padding:22px 16px;position:sticky;top:0;height:100vh;
 }
-.pulse-inner{
-  background:linear-gradient(180deg,#14151b,#0e0f13);
-  border-radius:var(--radius);
-  padding:22px 26px;
-  box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 24px 48px -26px rgba(0,0,0,.5);
-  display:flex;align-items:center;gap:20px;
-  position:relative;overflow:hidden;
+.brand{font-size:16px;font-weight:800;letter-spacing:-.01em;padding:0 10px;margin-bottom:28px;color:#fff}
+.brand span{color:var(--gold)}
+.navitem{
+  display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:9px;color:var(--dim);
+  font-size:13.5px;font-weight:600;cursor:pointer;transition:all .15s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;font-family:inherit;
 }
-.pulse-inner::before{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(260px 160px at 12% 20%, rgba(243,207,122,.14), transparent 70%);
+.navitem:hover{background:var(--line-soft);color:var(--txt)}
+.navitem.active{background:var(--line-soft);color:#fff}
+.navitem.active .navicon{color:var(--gold)}
+.navitem.disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
+.navicon{width:17px;height:17px;flex-shrink:0;color:var(--dim-2)}
+.sidebar-spacer{flex:1}
+.sidebar-foot{border-top:1px solid var(--line);padding-top:14px;margin-top:10px}
+.sidebar-addr{
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);background:var(--line-soft);
+  padding:8px 10px;border-radius:8px;word-break:break-all;line-height:1.5;margin-bottom:10px;
 }
-.pulse-radar{
-  position:relative;width:52px;height:52px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+.sidebar-foot .explink{display:block;font-size:12px;color:var(--dim-2);text-decoration:none;padding:6px 10px;font-weight:500}
+.sidebar-foot .explink:hover{color:var(--dim)}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+
+/* ===== top stat strip: dense, always-visible, ticker-like ===== */
+.statstrip{
+  display:flex;align-items:stretch;background:var(--panel);border-bottom:1px solid var(--line);
+  padding:0 28px;overflow-x:auto;
 }
-.pulse-ring{
-  position:absolute;border-radius:50%;border:1.5px solid var(--gold-1);
-  width:100%;height:100%;animation:radarPing 1.3s cubic-bezier(.2,.6,.4,1) infinite;
-}
+.stat{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:14px 26px 14px 0;border-right:1px solid var(--line);margin-right:26px;white-space:nowrap}
+.stat:last-child{border-right:none;margin-right:0}
+.stat .k{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim-2);font-weight:700;display:flex;align-items:center;gap:6px}
+.stat .v{font-size:16px;font-weight:700;color:#fff;transition:color .25s}
+.stat .v.flash{color:var(--gold)}
+.stat .v small{font-size:11px;color:var(--dim);font-weight:600;margin-left:3px}
+
+.pulse-dot-wrap{position:relative;width:8px;height:8px;display:inline-flex;align-items:center;justify-content:center}
+.pulse-ring{position:absolute;border-radius:50%;border:1.2px solid var(--gold);width:100%;height:100%;animation:radarPing 1.3s cubic-bezier(.2,.6,.4,1) infinite}
 .pulse-ring.r2{animation-delay:.433s}
 .pulse-ring.r3{animation-delay:.866s}
-@keyframes radarPing{
-  0%{transform:scale(.35);opacity:0}
-  15%{opacity:.8}
-  100%{transform:scale(1.6);opacity:0}
-}
-.pulse-core{
-  position:relative;width:14px;height:14px;border-radius:50%;
-  background:radial-gradient(circle at 35% 30%, var(--gold-1), var(--gold-2));
-  box-shadow:0 0 16px rgba(243,207,122,.7);
-}
+@keyframes radarPing{0%{transform:scale(.6);opacity:0}15%{opacity:.9}100%{transform:scale(3.2);opacity:0}}
+.pulse-core{position:relative;width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(240,185,11,.8)}
 .pulse-core.beat{animation:coreBeat .5s cubic-bezier(.2,.8,.3,1)}
-@keyframes coreBeat{0%{transform:scale(1)}35%{transform:scale(1.5)}100%{transform:scale(1)}}
+@keyframes coreBeat{0%{transform:scale(1)}35%{transform:scale(1.8)}100%{transform:scale(1)}}
+.livepill{font-size:9.5px;font-weight:800;letter-spacing:.08em;color:#0b0e11;background:var(--gold);padding:1px 6px;border-radius:4px}
 
-.pulse-main{flex:1;min-width:0;position:relative}
-.pulse-top{display:flex;align-items:center;gap:10px;margin-bottom:2px}
-.pulse-live{
-  font-size:10px;font-weight:800;letter-spacing:.1em;color:#0e0f13;background:var(--gold-1);
-  padding:2px 7px;border-radius:5px;
-}
-.pulse-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#9a9ca1;font-weight:700}
-.pulse-height{
-  font-size:30px;font-weight:800;color:#f5f3ee;letter-spacing:-.01em;line-height:1.15;
-  transition:color .25s;
-}
-.pulse-height.flash{color:var(--gold-1)}
-.pulse-stats{display:flex;gap:18px;margin-top:6px;flex-wrap:wrap}
-.pulse-stat{font-size:11.5px;color:#9a9ca1}
-.pulse-stat b{color:#e8e6e0;font-weight:700}
+.sparkrow{display:flex;align-items:flex-end;gap:2px;height:22px;padding:14px 0}
+.sparkbar{width:3px;border-radius:1.5px;background:linear-gradient(180deg,var(--gold),#a67c05);opacity:.85;transition:height .3s ease}
 
-.pulse-spark{display:flex;align-items:flex-end;gap:2px;height:28px;flex-shrink:0}
-.pulse-bar{width:3px;border-radius:2px;background:linear-gradient(180deg,var(--gold-1),var(--gold-2));opacity:.85;transition:height .3s ease}
+/* ===== content area ===== */
+.content{flex:1;padding:28px;max-width:1040px;width:100%}
+.grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:start}
+@media (max-width:860px){.grid2{grid-template-columns:1fr}.sidebar{display:none}}
 
-.wrap{max-width:520px;margin:0 auto;padding:48px 24px 80px}
-
-/* generic card */
 .card{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  padding:28px 28px;
-  box-shadow:var(--shadow);
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:24px;
 }
 .card + .card{margin-top:16px}
-.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim-2);font-weight:700;margin:0 0 10px}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.card-head h2{font-size:13px;font-weight:700;color:#fff;margin:0;letter-spacing:-.01em}
+.eyebrow{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim-2);font-weight:700;margin:0 0 8px}
 
-/* hero (disconnected) */
-.hero{margin-bottom:24px}
-.hero h1{font-size:25px;font-weight:800;letter-spacing:-.02em;margin:0 0 6px;text-align:center;color:var(--ink)}
-.hero p.lead{color:var(--dim);text-align:center;margin:0;font-size:14px;max-width:380px;margin-left:auto;margin-right:auto}
+/* onboarding (disconnected) */
+.onboard-wrap{max-width:460px;margin:40px auto 0}
+.onboard-wrap h1{font-size:22px;font-weight:800;color:#fff;margin:0 0 6px;text-align:center;letter-spacing:-.01em}
+.onboard-wrap p.lead{color:var(--dim);text-align:center;margin:0 0 24px;font-size:13.5px}
 
-.tabs{display:flex;gap:2px;background:var(--line-soft);border-radius:12px;padding:3px;margin-bottom:22px}
-.tab{flex:1;background:transparent;border:none;color:var(--dim);font-family:inherit;font-size:13px;font-weight:600;padding:10px;border-radius:9px;cursor:pointer;transition:all .18s}
-.tab.active{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tabs{display:flex;gap:2px;background:var(--line-soft);border-radius:10px;padding:3px;margin-bottom:20px}
+.tab{flex:1;background:transparent;border:none;color:var(--dim);font-family:inherit;font-size:13px;font-weight:600;padding:9px;border-radius:7px;cursor:pointer;transition:all .15s}
+.tab.active{background:var(--panel-2);color:#fff}
 .tab:hover:not(.active){color:var(--txt)}
 
 .walletgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .walletbtn{
-  display:flex;flex-direction:column;align-items:center;gap:10px;
-  background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 10px;
-  cursor:pointer;transition:all .18s cubic-bezier(.16,1,.3,1);color:var(--txt);font-family:inherit;
+  display:flex;flex-direction:column;align-items:center;gap:9px;
+  background:var(--line-soft);border:1px solid var(--line);border-radius:10px;padding:16px 8px;
+  cursor:pointer;transition:all .15s;color:var(--txt);font-family:inherit;
 }
-.walletbtn:hover{border-color:var(--gold-2);transform:translateY(-2px);box-shadow:0 10px 24px -14px rgba(0,0,0,.25)}
-.walletbtn:active{transform:translateY(0) scale(.98)}
-.walletbtn .badge{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
-.walletbtn .label{font-size:12px;font-weight:600}
+.walletbtn:hover{border-color:var(--gold-dim);background:var(--panel-2)}
+.walletbtn .badge{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.walletbtn .label{font-size:11.5px;font-weight:600}
 .badge.keplr{background:linear-gradient(135deg,#8a7dff,#5b4ce0)}
 .badge.leap{background:linear-gradient(135deg,#3fd19c,#17a874)}
 .badge.cosmostation{background:linear-gradient(135deg,#5ba3f5,#2f7fe6)}
 
-.hint-row{display:flex;align-items:center;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
-.hint-row .sub{font-size:12.5px;color:var(--dim-2);line-height:1.6}
+.hint-row{display:flex;align-items:center;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.hint-row .sub{font-size:12px;color:var(--dim-2);line-height:1.6}
 
-textarea{
-  width:100%;background:var(--line-soft);border:1px solid var(--line);color:var(--txt);
-  padding:14px 16px;border-radius:12px;font-size:14px;font-family:'JetBrains Mono',monospace;
-  resize:vertical;min-height:90px;line-height:1.6;
-}
 input[type=text],input[type=password]{
   width:100%;background:var(--line-soft);border:1px solid var(--line);color:var(--txt);
-  padding:13px 15px;border-radius:12px;font-size:14px;font-family:'JetBrains Mono',monospace;
-  transition:border-color .15s, background .15s;
+  padding:12px 14px;border-radius:9px;font-size:13.5px;font-family:'JetBrains Mono',monospace;
+  transition:border-color .15s;
 }
-textarea:focus,input:focus{outline:none;border-color:var(--gold-2);background:var(--panel)}
-label{display:block;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--dim-2);margin-bottom:7px;font-weight:700}
-.field{margin-bottom:16px}
+input:focus{outline:none;border-color:var(--gold)}
+label{display:block;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--dim-2);margin-bottom:6px;font-weight:700}
+.field{margin-bottom:14px}
 
 button{font-family:inherit}
 button.primary{
-  background:var(--ink);
-  color:#fff;border:none;padding:14px 24px;font-size:14px;font-weight:700;
-  border-radius:12px;cursor:pointer;width:100%;
-  box-shadow:0 10px 24px -12px rgba(22,23,26,.45);
-  transition:transform .15s cubic-bezier(.16,1,.3,1), box-shadow .15s, background .15s;
+  background:var(--gold);color:#0b0e11;border:none;padding:13px 22px;font-size:13.5px;font-weight:700;
+  border-radius:10px;cursor:pointer;width:100%;transition:all .15s;
 }
-button.primary:hover{transform:translateY(-1px);background:#2a2b30;box-shadow:0 14px 28px -12px rgba(22,23,26,.5)}
+button.primary:hover{background:#ffd033;transform:translateY(-1px)}
 button.primary:active{transform:translateY(0) scale(.98)}
-button.primary:disabled{background:#d4d4d2;color:#9a9a97;box-shadow:none;cursor:not-allowed;transform:none}
-button.gold{
-  background:linear-gradient(135deg,var(--gold-1),var(--gold-2));
-  color:#2b1f03;border:none;padding:14px 24px;font-size:14px;font-weight:700;
-  border-radius:12px;cursor:pointer;width:100%;
-  box-shadow:0 10px 24px -12px rgba(201,151,31,.5);
-  transition:transform .15s cubic-bezier(.16,1,.3,1), box-shadow .15s;
-}
-button.gold:hover{transform:translateY(-1px)}
-button.gold:active{transform:translateY(0) scale(.98)}
+button.primary:disabled{background:#3a3d42;color:#6b7078;cursor:not-allowed;transform:none}
 button.ghost{
   background:transparent;border:1px solid var(--line);color:var(--txt);
-  padding:13px 22px;font-size:13px;font-weight:600;border-radius:12px;cursor:pointer;width:100%;
-  transition:all .15s;
+  padding:12px 20px;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;width:100%;transition:all .15s;
 }
 button.ghost:hover{border-color:var(--dim);background:var(--line-soft)}
-button.link{background:none;border:none;color:var(--dim);font-size:12.5px;cursor:pointer;font-weight:600;padding:0}
-button.link:hover{color:var(--txt)}
+button.link{background:none;border:none;color:var(--dim);font-size:12px;cursor:pointer;font-weight:600;padding:0}
+button.link:hover{color:#fff}
 
-/* connected state */
-.balance-hero{text-align:center;padding:4px 0 0}
-.balance-hero .amount{font-size:48px;font-weight:800;letter-spacing:-.02em;line-height:1;color:var(--ink)}
-.balance-hero .denom{font-size:15px;color:var(--dim);font-weight:700;margin-left:6px}
-.addr-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px}
-.addr-chip{
-  font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--dim);
-  background:var(--line-soft);padding:7px 13px;border-radius:999px;
-}
-.icon-btn{background:var(--line-soft);border:none;color:var(--dim);cursor:pointer;padding:7px;border-radius:999px;display:inline-flex;align-items:center;transition:all .15s}
-.icon-btn:hover{color:var(--txt);background:var(--line)}
-.connmeta{display:flex;justify-content:center;gap:18px;margin-top:16px}
+/* overview */
+.balance-row{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.balance-amount{font-size:40px;font-weight:800;letter-spacing:-.02em;color:#fff;line-height:1}
+.balance-amount .denom{font-size:14px;color:var(--dim);font-weight:700;margin-left:6px}
+.quickactions{display:flex;gap:10px}
+.quickactions button{width:auto;padding:11px 22px}
+.addr-row{display:flex;align-items:center;gap:8px;margin-top:14px}
+.addr-chip{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--dim);background:var(--line-soft);padding:6px 12px;border-radius:7px}
+.icon-btn{background:var(--line-soft);border:none;color:var(--dim);cursor:pointer;padding:6px;border-radius:7px;display:inline-flex;align-items:center;transition:all .15s}
+.icon-btn:hover{color:#fff;background:var(--panel-2)}
 
-/* action row (Receive / Send) */
-.action-tabs{display:flex;gap:10px;margin:22px 0 0}
-.action-tab{
-  flex:1;background:var(--line-soft);border:1px solid transparent;color:var(--txt);
-  font-size:13px;font-weight:700;padding:13px;border-radius:12px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:8px;transition:all .18s;
-}
-.action-tab:hover{background:var(--line)}
-.action-tab.active{background:var(--ink);color:#fff}
+/* receive */
+.qr-wrap{display:flex;flex-direction:column;align-items:center;padding:4px 0}
+.qr-box{background:#fff;padding:16px;border-radius:14px;line-height:0}
+.qr-box canvas{display:block}
+.receive-addr{margin-top:18px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--txt);text-align:center;word-break:break-all;line-height:1.6}
+.receive-note{font-size:11.5px;color:var(--dim-2);text-align:center;margin-top:8px;max-width:320px}
 
-/* receive panel */
-.qr-wrap{display:flex;flex-direction:column;align-items:center;padding:6px 0 2px}
-.qr-box{background:#fff;padding:18px;border-radius:18px;line-height:0;border:1px solid var(--line);box-shadow:var(--shadow)}
-.qr-box canvas{display:block;border-radius:4px}
-.receive-addr{margin-top:20px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--txt);text-align:center;word-break:break-all;line-height:1.6}
-.receive-note{font-size:12.5px;color:var(--dim-2);text-align:center;margin-top:8px;max-width:320px}
-
-/* giant amount input (send) */
-.amount-card{background:var(--line-soft);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:12px;transition:border-color .15s}
-.amount-card:focus-within{border-color:var(--gold-2)}
-.amount-card label{margin-bottom:10px}
+/* send amount */
+.amount-card{background:var(--line-soft);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:12px;transition:border-color .15s}
+.amount-card:focus-within{border-color:var(--gold)}
+.amount-card label{margin-bottom:8px}
 .amount-input-row{display:flex;align-items:baseline;gap:10px}
 .amount-input{
-  flex:1;background:none;border:none;color:var(--ink);font-family:'Inter',sans-serif;
-  font-size:38px;font-weight:800;letter-spacing:-.01em;padding:0;width:100%;
+  flex:1;background:none;border:none;color:#fff;font-family:'Inter',sans-serif;
+  font-size:32px;font-weight:800;letter-spacing:-.01em;padding:0;width:100%;
 }
 .amount-input:focus{outline:none}
-.amount-input::placeholder{color:#c8c8c4}
-.amount-denom{font-size:15px;font-weight:700;color:var(--dim)}
-.amount-sub{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;color:var(--dim-2)}
+.amount-input::placeholder{color:#3a3d42}
+.amount-denom{font-size:13px;font-weight:700;color:var(--dim)}
+.amount-sub{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:11.5px;color:var(--dim-2)}
+.maxbtn{font-size:10.5px;font-weight:800;color:#0b0e11;background:var(--gold);border:none;border-radius:6px;padding:4px 12px;cursor:pointer}
+.hint{font-size:11px;color:var(--dim-2);margin-top:6px}
 
-.field-row{display:flex;gap:8px}
-.field-row input{flex:1}
-.maxbtn{
-  font-size:11px;font-weight:700;color:#2b1f03;background:linear-gradient(135deg,var(--gold-1),var(--gold-2));
-  border:none;border-radius:7px;padding:5px 14px;cursor:pointer;
-}
-.hint{font-size:11.5px;color:var(--dim-2);margin-top:6px}
-
-/* review step */
-.review-row{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);gap:16px}
+/* review */
+.review-row{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line);gap:16px}
 .review-row:last-child{border-bottom:none}
-.review-row .k{font-size:12px;color:var(--dim-2);white-space:nowrap;padding-top:1px}
-.review-row .v{font-size:13px;color:var(--ink);text-align:right;font-family:'JetBrains Mono',monospace;word-break:break-all;font-weight:600}
-.review-actions{display:flex;gap:10px;margin-top:20px}
+.review-row .k{font-size:11.5px;color:var(--dim-2);white-space:nowrap;padding-top:1px}
+.review-row .v{font-size:12.5px;color:#fff;text-align:right;font-family:'JetBrains Mono',monospace;word-break:break-all;font-weight:600}
+.review-actions{display:flex;gap:10px;margin-top:18px}
 .review-actions button{flex:1}
 
-/* activity */
-.activity-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line);gap:12px}
-.activity-row:last-child{border-bottom:none}
-.activity-left{display:flex;align-items:center;gap:12px;min-width:0}
-.activity-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
-.activity-icon.out{background:var(--bad-bg);color:var(--bad)}
-.activity-icon.in{background:var(--ok-bg);color:var(--ok)}
-.activity-meta{min-width:0}
-.activity-meta .dir{font-size:13px;font-weight:700;color:var(--ink)}
-.activity-meta .cp{font-size:11.5px;color:var(--dim-2);font-family:'JetBrains Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px}
-.activity-right{text-align:right;flex-shrink:0}
-.activity-right .amt{font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace}
-.activity-right .amt.out{color:var(--bad)}
-.activity-right .amt.in{color:var(--ok)}
-.activity-right .t{font-size:11px;color:var(--dim-2);margin-top:2px}
-.activity-empty{font-size:13px;color:var(--dim-2);text-align:center;padding:14px 0}
+/* activity table */
+.tx-table{width:100%;border-collapse:collapse}
+.tx-table th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim-2);font-weight:700;text-align:left;padding:0 0 10px;border-bottom:1px solid var(--line)}
+.tx-table th.r{text-align:right}
+.tx-table td{padding:12px 0;border-bottom:1px solid var(--line);font-size:12.5px;vertical-align:middle}
+.tx-table tr:last-child td{border-bottom:none}
+.tx-table td.r{text-align:right}
+.tx-dir{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:#fff}
+.tx-icon{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.tx-icon.out{background:var(--bad-bg);color:var(--bad)}
+.tx-icon.in{background:var(--ok-bg);color:var(--ok)}
+.tx-cp{font-family:'JetBrains Mono',monospace;color:var(--dim);font-size:11.5px}
+.tx-amt{font-family:'JetBrains Mono',monospace;font-weight:700}
+.tx-amt.out{color:var(--bad)}
+.tx-amt.in{color:var(--ok)}
+.tx-height{color:var(--dim-2);font-family:'JetBrains Mono',monospace;font-size:11.5px}
+.activity-empty{font-size:12.5px;color:var(--dim-2);text-align:center;padding:24px 0}
 
-.status-box{padding:14px 18px;border-radius:12px;font-size:13px;margin-top:16px;display:none;word-break:break-all;line-height:1.6;font-weight:500}
+.status-box{padding:12px 16px;border-radius:9px;font-size:12.5px;margin-top:14px;display:none;word-break:break-all;line-height:1.6;font-weight:500}
 .status-box.ok{display:block;background:var(--ok-bg);color:var(--ok)}
 .status-box.bad{display:block;background:var(--bad-bg);color:var(--bad)}
-.status-box.pending{display:block;background:var(--warn-bg);color:var(--warn)}
+.status-box.pending{display:block;background:rgba(240,185,11,.1);color:var(--gold)}
 .status-box a{color:inherit}
 
-/* import: individual word boxes */
-.seed-toggle{display:flex;gap:6px;margin-bottom:14px}
+/* import: word boxes */
+.seed-toggle{display:flex;gap:6px;margin-bottom:12px}
 .seed-toggle button{
   flex:0 0 auto;background:var(--line-soft);border:1px solid var(--line);color:var(--dim);
-  font-size:12px;font-weight:700;padding:6px 14px;border-radius:999px;cursor:pointer;transition:all .15s;
+  font-size:11.5px;font-weight:700;padding:5px 13px;border-radius:999px;cursor:pointer;transition:all .15s;
 }
-.seed-toggle button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
-.seed-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
-.seed-box{display:flex;align-items:center;background:var(--line-soft);border:1px solid var(--line);border-radius:9px;padding:0 4px 0 10px;transition:border-color .15s}
-.seed-box:focus-within{border-color:var(--gold-2);background:var(--panel)}
-.seed-box .n{font-size:11px;color:var(--dim-2);width:16px;flex-shrink:0;font-family:'JetBrains Mono',monospace}
-.seed-box input{
-  border:none;background:none;padding:9px 4px;font-size:13px;width:100%;min-width:0;
-  font-family:'JetBrains Mono',monospace;color:var(--txt);
-}
+.seed-toggle button.active{background:var(--gold);color:#0b0e11;border-color:var(--gold)}
+.seed-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px}
+.seed-box{display:flex;align-items:center;background:var(--line-soft);border:1px solid var(--line);border-radius:8px;padding:0 4px 0 9px;transition:border-color .15s}
+.seed-box:focus-within{border-color:var(--gold)}
+.seed-box .n{font-size:10.5px;color:var(--dim-2);width:15px;flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.seed-box input{border:none;background:none;padding:8px 4px;font-size:12.5px;width:100%;min-width:0;font-family:'JetBrains Mono',monospace;color:var(--txt)}
 .seed-box input:focus{outline:none}
-.seed-paste-hint{font-size:11.5px;color:var(--dim-2);text-align:center;margin-bottom:14px}
+.seed-paste-hint{font-size:11px;color:var(--dim-2);text-align:center;margin-bottom:12px}
 
 /* modal */
 .modal-backdrop{
-  display:none;position:fixed;inset:0;background:rgba(20,20,15,.45);backdrop-filter:blur(3px);
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);
   align-items:center;justify-content:center;z-index:50;padding:20px;
 }
 .modal-backdrop.show{display:flex}
-.modal{
-  background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:30px;max-width:440px;width:100%;
-  box-shadow:0 40px 80px -24px rgba(0,0,0,.35);
-}
-.modal h3{margin:0 0 6px;font-size:18px;font-weight:800;color:var(--ink)}
-.modal p.sub{color:var(--dim);font-size:13px;margin:0 0 18px;line-height:1.6}
-.mnemonic-grid{
-  display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;background:var(--line-soft);border:1px solid var(--line);
-  border-radius:12px;padding:16px;margin-bottom:18px;
-}
-.mnemonic-word{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--txt);display:flex;gap:6px}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;max-width:420px;width:100%}
+.modal h3{margin:0 0 6px;font-size:16px;font-weight:800;color:#fff}
+.modal p.sub{color:var(--dim);font-size:12.5px;margin:0 0 16px;line-height:1.6}
+.mnemonic-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;background:var(--line-soft);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:16px}
+.mnemonic-word{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--txt);display:flex;gap:6px}
 .mnemonic-word .n{color:var(--dim-2);width:16px;text-align:right}
-.confirm-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;font-size:13px;color:var(--dim)}
+.confirm-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:18px;font-size:12.5px;color:var(--dim)}
 .confirm-row input{width:auto;margin-top:2px}
 .modal-actions{display:flex;gap:10px}
 .modal-actions button{flex:1}
 
-footer{margin-top:44px;font-size:11.5px;color:var(--dim-2);text-align:center;line-height:1.8}
-footer a{color:var(--dim-2);text-decoration:none;border-bottom:1px solid var(--line)}
-footer a:hover{color:var(--dim)}
-
-@media (max-width:480px){
+@media (max-width:640px){
   .walletgrid{grid-template-columns:1fr}
   .seed-grid{grid-template-columns:1fr 1fr}
-  .balance-hero .amount{font-size:38px}
+  .balance-amount{font-size:30px}
+  .content{padding:18px}
+  .statstrip{padding:0 16px}
 }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="brand">Nexa<span>Rail</span></div>
-  <a class="explink" href="mainnet.html">Explorer</a>
-</div>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">Nexa<span>Rail</span></div>
 
-<div class="pulse-card">
-  <div class="pulse-inner">
-    <div class="pulse-radar">
-      <div class="pulse-ring"></div>
-      <div class="pulse-ring r2"></div>
-      <div class="pulse-ring r3"></div>
-      <div class="pulse-core" id="pulse-core"></div>
+    <button class="navitem active" data-nav="overview" onclick="switchNav('overview')">
+      <svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      Overview
+    </button>
+    <button class="navitem" data-nav="receive" onclick="switchNav('receive')" id="nav-receive">
+      <svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      Receive
+    </button>
+    <button class="navitem" data-nav="send" onclick="switchNav('send')" id="nav-send">
+      <svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      Send
+    </button>
+    <button class="navitem" data-nav="activity" onclick="switchNav('activity')" id="nav-activity">
+      <svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
+      Activity
+    </button>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="sidebar-foot" id="sidebar-connected-foot" style="display:none">
+      <div class="sidebar-addr mono" id="sb-address">—</div>
+      <button class="navitem" onclick="disconnectWallet()" style="color:var(--bad)">
+        <svg class="navicon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Disconnect
+      </button>
     </div>
-    <div class="pulse-main">
-      <div class="pulse-top">
-        <span class="pulse-live" id="pulse-live">LIVE</span>
-        <span class="pulse-label">Block height</span>
-      </div>
-      <div class="pulse-height tnum" id="pulse-height">—</div>
-      <div class="pulse-stats">
-        <span class="pulse-stat"><b id="pulse-blocktime">—</b> avg block time</span>
-        <span class="pulse-stat"><b id="pulse-validators">—</b> validators securing the network</span>
-      </div>
+    <div class="sidebar-foot">
+      <a class="explink" href="mainnet.html">Network explorer &rarr;</a>
     </div>
-    <div class="pulse-spark" id="pulse-spark"></div>
-  </div>
-</div>
+  </aside>
 
-<div class="wrap">
-
-  <!-- DISCONNECTED STATE -->
-  <div id="view-disconnected">
-    <div class="hero">
-      <h1>Your NexaRail Wallet</h1>
-      <p class="lead">Create a wallet in seconds, or connect one you already have.</p>
-    </div>
-
-    <div class="card fade-in">
-      <div class="tabs">
-        <button class="tab" data-tab="connect" onclick="switchTab('connect')">Connect</button>
-        <button class="tab active" data-tab="create" onclick="switchTab('create')">Create New</button>
-        <button class="tab" data-tab="import" onclick="switchTab('import')">Import</button>
+  <div class="main">
+    <div class="statstrip">
+      <div class="stat">
+        <span class="k"><span class="pulse-dot-wrap"><span class="pulse-ring"></span><span class="pulse-ring r2"></span><span class="pulse-ring r3"></span><span class="pulse-core" id="pulse-core"></span></span> <span class="livepill" id="pulse-live">LIVE</span></span>
+        <span class="v tnum" id="stat-height">—</span>
       </div>
-
-      <div id="panel-connect" style="display:none">
-        <div class="walletgrid">
-          <button class="walletbtn" onclick="connectExtension('keplr')">
-            <span class="badge keplr">K</span><span class="label">Keplr</span>
-          </button>
-          <button class="walletbtn" onclick="connectExtension('leap')">
-            <span class="badge leap">L</span><span class="label">Leap</span>
-          </button>
-          <button class="walletbtn" onclick="connectExtension('cosmostation')">
-            <span class="badge cosmostation">C</span><span class="label">Cosmostation</span>
-          </button>
-        </div>
-        <div class="hint-row">
-          <span class="sub">Don't have one installed? <b style="color:var(--txt)">Create New</b> works instantly, no extension needed.</span>
-        </div>
+      <div class="stat">
+        <span class="k">Avg block time</span>
+        <span class="v tnum" id="stat-blocktime">—</span>
       </div>
-
-      <div id="panel-create">
-        <p style="color:var(--dim);font-size:13.5px;line-height:1.6;margin:0 0 18px">
-          Generates a new wallet right here in your browser — ready in one click. You'll get a recovery phrase to keep safe.
-        </p>
-        <button class="gold" onclick="createWallet()">Create wallet</button>
+      <div class="stat">
+        <span class="k">Validators</span>
+        <span class="v tnum" id="stat-validators">—</span>
       </div>
-
-      <div id="panel-import" style="display:none">
-        <div class="seed-toggle">
-          <button class="active" data-len="12" onclick="setSeedLength(12)">12 words</button>
-          <button data-len="24" onclick="setSeedLength(24)">24 words</button>
-        </div>
-        <div class="seed-grid" id="seed-grid"></div>
-        <div class="seed-paste-hint">Paste your whole phrase into any box — it'll fill the rest automatically.</div>
-        <button class="gold" onclick="importWallet()">Import wallet</button>
-        <div id="import-error" class="status-box"></div>
+      <div class="stat" id="stat-balance-wrap" style="display:none">
+        <span class="k">Your balance</span>
+        <span class="v tnum" id="stat-balance">—<small>NXRL</small></span>
       </div>
-
-      <div id="connect-error" class="status-box"></div>
+      <div style="flex:1"></div>
+      <div class="sparkrow" id="pulse-spark"></div>
     </div>
 
-    <div class="card fade-in" id="saved-wallet-card" style="display:none">
-      <div class="eyebrow">Saved on this device</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-        <span style="color:var(--dim);font-size:13px">You have a wallet saved in this browser.</span>
-        <button class="ghost" style="width:auto" onclick="openUnlockModal()">Unlock</button>
-      </div>
-    </div>
-  </div>
+    <div class="content">
 
-  <!-- CONNECTED STATE -->
-  <div id="view-connected" style="display:none">
-    <div class="card fade-in">
-      <div class="balance-hero">
-        <div class="eyebrow" style="text-align:center">Balance</div>
-        <div class="amount tnum" id="my-balance">0</div><span class="denom">NXRL</span>
-        <div class="addr-row">
-          <span class="addr-chip mono" id="my-address">—</span>
-          <button class="icon-btn" onclick="copyAddress()" title="Copy address">⧉</button>
-        </div>
-        <div class="connmeta">
-          <span class="sub" style="font-size:11.5px;color:var(--dim-2);font-weight:600" id="conn-label">—</span>
-          <button class="link" onclick="offerSaveToDevice()" id="save-device-link" style="display:none">Save to this device</button>
-          <button class="link" onclick="disconnectWallet()">Disconnect</button>
-        </div>
-      </div>
-      <div class="action-tabs">
-        <button class="action-tab" data-atab="receive" onclick="switchActionTab('receive')">Receive</button>
-        <button class="action-tab active" data-atab="send" onclick="switchActionTab('send')">Send</button>
-      </div>
-    </div>
+      <!-- DISCONNECTED: onboarding -->
+      <div id="view-disconnected">
+        <div class="onboard-wrap">
+          <h1>Connect your wallet</h1>
+          <p class="lead">Create a wallet in seconds, or connect one you already have.</p>
 
-    <!-- RECEIVE -->
-    <div class="card" id="panel-receive" style="display:none">
-      <div class="eyebrow" style="text-align:center">Receive NXRL</div>
-      <div class="qr-wrap">
-        <div class="qr-box"><canvas id="receive-qr"></canvas></div>
-        <div class="receive-addr" id="receive-address">—</div>
-        <div class="receive-note">Share this address to receive NXRL from any Cosmos-SDK wallet.</div>
-        <button class="ghost" style="width:auto;margin-top:16px" onclick="copyAddress()">Copy address</button>
-      </div>
-    </div>
+          <div class="card fade-in">
+            <div class="tabs">
+              <button class="tab" data-tab="connect" onclick="switchTab('connect')">Connect</button>
+              <button class="tab active" data-tab="create" onclick="switchTab('create')">Create New</button>
+              <button class="tab" data-tab="import" onclick="switchTab('import')">Import</button>
+            </div>
 
-    <!-- SEND (amount entry) -->
-    <div class="card" id="panel-send">
-      <div class="eyebrow">Send NXRL</div>
-      <div id="send-form-step">
-        <div class="field">
-          <label>Recipient address</label>
-          <input type="text" id="send-to" placeholder="nxr1...">
-        </div>
-        <div class="amount-card">
-          <label>Amount</label>
-          <div class="amount-input-row">
-            <input type="text" class="amount-input tnum" id="send-amount" placeholder="0.00" inputmode="decimal">
-            <span class="amount-denom">NXRL</span>
+            <div id="panel-connect" style="display:none">
+              <div class="walletgrid">
+                <button class="walletbtn" onclick="connectExtension('keplr')">
+                  <span class="badge keplr">K</span><span class="label">Keplr</span>
+                </button>
+                <button class="walletbtn" onclick="connectExtension('leap')">
+                  <span class="badge leap">L</span><span class="label">Leap</span>
+                </button>
+                <button class="walletbtn" onclick="connectExtension('cosmostation')">
+                  <span class="badge cosmostation">C</span><span class="label">Cosmostation</span>
+                </button>
+              </div>
+              <div class="hint-row">
+                <span class="sub">Don't have one installed? <b style="color:var(--txt)">Create New</b> works instantly, no extension needed.</span>
+              </div>
+            </div>
+
+            <div id="panel-create">
+              <p style="color:var(--dim);font-size:13px;line-height:1.6;margin:0 0 16px">
+                Generates a new wallet right here in your browser — ready in one click. You'll get a recovery phrase to keep safe.
+              </p>
+              <button class="primary" onclick="createWallet()">Create wallet</button>
+            </div>
+
+            <div id="panel-import" style="display:none">
+              <div class="seed-toggle">
+                <button class="active" data-len="12" onclick="setSeedLength(12)">12 words</button>
+                <button data-len="24" onclick="setSeedLength(24)">24 words</button>
+              </div>
+              <div class="seed-grid" id="seed-grid"></div>
+              <div class="seed-paste-hint">Paste your whole phrase into any box — it'll fill the rest automatically.</div>
+              <button class="primary" onclick="importWallet()">Import wallet</button>
+              <div id="import-error" class="status-box"></div>
+            </div>
+
+            <div id="connect-error" class="status-box"></div>
           </div>
-          <div class="amount-sub">
-            <span>Balance: <span id="send-balance-hint">0</span> NXRL</span>
-            <button class="maxbtn" onclick="setMax()">MAX</button>
+
+          <div class="card fade-in" id="saved-wallet-card" style="display:none">
+            <div class="eyebrow">Saved on this device</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+              <span style="color:var(--dim);font-size:13px">You have a wallet saved in this browser.</span>
+              <button class="ghost" style="width:auto" onclick="openUnlockModal()">Unlock</button>
+            </div>
           </div>
         </div>
-        <div class="field">
-          <label>Memo (optional)</label>
-          <input type="text" id="send-memo" placeholder="">
-        </div>
-        <button class="primary" id="review-btn" onclick="reviewSend()">Review</button>
-        <div id="send-status" class="status-box"></div>
       </div>
 
-      <!-- SEND (review / confirm step) -->
-      <div id="send-review-step" style="display:none" class="fade-in">
-        <div class="review-row"><span class="k">From</span><span class="v" id="rv-from">—</span></div>
-        <div class="review-row"><span class="k">To</span><span class="v" id="rv-to">—</span></div>
-        <div class="review-row"><span class="k">Amount</span><span class="v" id="rv-amount">—</span></div>
-        <div class="review-row"><span class="k">Network fee</span><span class="v" id="rv-fee">—</span></div>
-        <div class="review-row" id="rv-memo-row" style="display:none"><span class="k">Memo</span><span class="v" id="rv-memo">—</span></div>
-        <div class="review-actions">
-          <button class="ghost" onclick="cancelReview()">Back</button>
-          <button class="primary" id="confirm-send-btn" onclick="confirmSend()">Confirm &amp; Send</button>
-        </div>
-        <div id="confirm-status" class="status-box"></div>
-      </div>
-    </div>
+      <!-- CONNECTED -->
+      <div id="view-connected" style="display:none">
 
-    <!-- ACTIVITY -->
-    <div class="card" id="panel-activity">
-      <div class="eyebrow">Recent activity</div>
-      <div id="activity-list"><div class="activity-empty skeleton">Loading transactions</div></div>
+        <!-- OVERVIEW -->
+        <div id="view-overview">
+          <div class="card fade-in">
+            <div class="eyebrow">Balance</div>
+            <div class="balance-row">
+              <div class="balance-amount tnum" id="my-balance">0<span class="denom">NXRL</span></div>
+              <div class="quickactions">
+                <button class="ghost" onclick="switchNav('receive')">Receive</button>
+                <button class="primary" onclick="switchNav('send')">Send</button>
+              </div>
+            </div>
+            <div class="addr-row">
+              <span class="addr-chip mono" id="my-address">—</span>
+              <button class="icon-btn" onclick="copyAddress()" title="Copy address">⧉</button>
+              <span class="sub" style="font-size:11px;color:var(--dim-2);font-weight:600;margin-left:4px" id="conn-label">—</span>
+              <button class="link" onclick="offerSaveToDevice()" id="save-device-link" style="display:none;margin-left:10px">Save to this device</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h2>Recent activity</h2><button class="link" onclick="switchNav('activity')">View all</button></div>
+            <div id="activity-list-preview"><div class="activity-empty skeleton">Loading transactions</div></div>
+          </div>
+        </div>
+
+        <!-- RECEIVE -->
+        <div id="view-receive" style="display:none">
+          <div class="card fade-in">
+            <div class="card-head"><h2>Receive NXRL</h2></div>
+            <div class="qr-wrap">
+              <div class="qr-box"><canvas id="receive-qr"></canvas></div>
+              <div class="receive-addr" id="receive-address">—</div>
+              <div class="receive-note">Share this address to receive NXRL from any Cosmos-SDK wallet.</div>
+              <button class="ghost" style="width:auto;margin-top:16px" onclick="copyAddress()">Copy address</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEND -->
+        <div id="view-send" style="display:none">
+          <div class="card fade-in">
+            <div class="card-head"><h2>Send NXRL</h2></div>
+            <div id="send-form-step">
+              <div class="field">
+                <label>Recipient address</label>
+                <input type="text" id="send-to" placeholder="nxr1...">
+              </div>
+              <div class="amount-card">
+                <label>Amount</label>
+                <div class="amount-input-row">
+                  <input type="text" class="amount-input tnum" id="send-amount" placeholder="0.00" inputmode="decimal">
+                  <span class="amount-denom">NXRL</span>
+                </div>
+                <div class="amount-sub">
+                  <span>Balance: <span id="send-balance-hint">0</span> NXRL</span>
+                  <button class="maxbtn" onclick="setMax()">MAX</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>Memo (optional)</label>
+                <input type="text" id="send-memo" placeholder="">
+              </div>
+              <button class="primary" id="review-btn" onclick="reviewSend()">Review</button>
+              <div id="send-status" class="status-box"></div>
+            </div>
+
+            <div id="send-review-step" style="display:none" class="fade-in">
+              <div class="review-row"><span class="k">From</span><span class="v" id="rv-from">—</span></div>
+              <div class="review-row"><span class="k">To</span><span class="v" id="rv-to">—</span></div>
+              <div class="review-row"><span class="k">Amount</span><span class="v" id="rv-amount">—</span></div>
+              <div class="review-row"><span class="k">Network fee</span><span class="v" id="rv-fee">—</span></div>
+              <div class="review-row" id="rv-memo-row" style="display:none"><span class="k">Memo</span><span class="v" id="rv-memo">—</span></div>
+              <div class="review-actions">
+                <button class="ghost" onclick="cancelReview()">Back</button>
+                <button class="primary" id="confirm-send-btn" onclick="confirmSend()">Confirm &amp; Send</button>
+              </div>
+              <div id="confirm-status" class="status-box"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTIVITY -->
+        <div id="view-activity" style="display:none">
+          <div class="card fade-in">
+            <div class="card-head"><h2>All activity</h2></div>
+            <div id="activity-list-full"><div class="activity-empty skeleton">Loading transactions</div></div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
-
-  <footer>
-    Transfers are signed locally — this page never transmits your keys.<br>
-    <a href="mainnet.html">Network status &amp; explorer</a>
-  </footer>
 </div>
 
 <!-- Mnemonic reveal modal -->
@@ -530,7 +495,7 @@ footer a:hover{color:var(--dim)}
     <div class="mnemonic-grid" id="mnemonic-grid"></div>
     <div class="confirm-row">
       <input type="checkbox" id="mnemonic-confirm">
-      <label for="mnemonic-confirm" style="margin:0;text-transform:none;letter-spacing:0;font-size:13px;color:var(--dim);font-weight:400">I've saved my recovery phrase somewhere safe</label>
+      <label for="mnemonic-confirm" style="margin:0;text-transform:none;letter-spacing:0;font-size:12.5px;color:var(--dim);font-weight:400">I've saved my recovery phrase somewhere safe</label>
     </div>
     <div class="modal-actions">
       <button class="primary" id="mnemonic-continue" disabled onclick="confirmMnemonicSaved()">Continue</button>
@@ -621,18 +586,12 @@ const WALLETS = {
 
 let signingClient = null;
 let myAddress = null;
-let pendingMnemonic = null; // mnemonic awaiting user confirmation in the reveal modal
-let localSigner = null;     // DirectSecp256k1HdWallet, kept in memory only
-let pendingSend = null;     // { to, amountUnxrl, memo, fee, msg }
+let pendingMnemonic = null;
+let localSigner = null;
+let pendingSend = null;
 
 function fmtNxrl(unxrl){return new Intl.NumberFormat('en-US',{maximumFractionDigits:6}).format(Number(unxrl)/1_000_000)}
 function fmt(n){return new Intl.NumberFormat('en-US').format(n)}
-function ago(iso){
-  const s = (Date.now() - new Date(iso).getTime())/1000;
-  if(s<60) return Math.round(s)+'s ago';
-  if(s<3600) return Math.round(s/60)+'m ago';
-  return Math.round(s/3600)+'h ago';
-}
 
 function nxrlToUnxrl(input){
   const s = String(input).trim();
@@ -644,35 +603,34 @@ function nxrlToUnxrl(input){
   return val;
 }
 
-// animate a number counting up, for that "alive" feel on balance reveals
-function animateNumber(el, from, to, durationMs){
+function animateNumber(el, from, to, durationMs, suffixHtml){
   const start = performance.now();
   function frame(now){
     const t = Math.min(1, (now - start) / durationMs);
     const eased = 1 - Math.pow(1 - t, 3);
     const val = from + (to - from) * eased;
-    el.textContent = fmtNxrl(Math.round(val * 1e6));
+    el.innerHTML = fmtNxrl(Math.round(val * 1e6)) + (suffixHtml || '');
     if(t < 1) requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
 }
 
-// --- network pulse: real block-production heartbeat, polled fast enough to
-// feel continuous. Every number here is live chain data, nothing decorative
-// is faked — the radar rings loop at the chain's own measured block cadence. ---
+// --- top stat strip: real block-production heartbeat. Polled fast enough to
+// feel continuous; the radar rings loop at the chain's own measured cadence,
+// nothing here is decorative/fake. ---
 let pulseLastHeight = null;
 let pulseLastBeatMs = null;
 let blockIntervalsMs = [];
-const PULSE_SPARK_BARS = 20;
+const SPARK_BARS = 24;
 
 function renderSparkline(){
   const el = document.getElementById('pulse-spark');
-  const recent = blockIntervalsMs.slice(-PULSE_SPARK_BARS);
+  const recent = blockIntervalsMs.slice(-SPARK_BARS);
   const bars = [];
-  for(let i = 0; i < PULSE_SPARK_BARS; i++){
+  for(let i = 0; i < SPARK_BARS; i++){
     const ms = recent[i];
-    const h = ms ? Math.max(5, Math.min(28, (ms / 1000) * 14)) : 5;
-    bars.push(`<div class="pulse-bar" style="height:${h}px;opacity:${ms ? .9 : .25}"></div>`);
+    const h = ms ? Math.max(4, Math.min(22, (ms / 1000) * 11)) : 4;
+    bars.push(`<div class="sparkbar" style="height:${h}px;opacity:${ms ? .9 : .2}"></div>`);
   }
   el.innerHTML = bars.join('');
 }
@@ -680,9 +638,9 @@ renderSparkline();
 
 function setPulseState(state){
   const live = document.getElementById('pulse-live');
-  if(state === 'live'){ live.textContent = 'LIVE'; live.style.background = 'var(--gold-1)'; live.style.color = '#0e0f13'; }
-  else if(state === 'syncing'){ live.textContent = 'SYNCING'; live.style.background = '#f5a623'; live.style.color = '#1a1300'; }
-  else { live.textContent = 'OFFLINE'; live.style.background = '#6b6d72'; live.style.color = '#fff'; }
+  if(state === 'live'){ live.textContent = 'LIVE'; live.style.background = 'var(--gold)'; live.style.color = '#0b0e11'; }
+  else if(state === 'syncing'){ live.textContent = 'SYNC'; live.style.background = '#f5a623'; live.style.color = '#1a1300'; }
+  else { live.textContent = 'OFFLINE'; live.style.background = '#5e6673'; live.style.color = '#fff'; }
 }
 
 async function refreshPulse(){
@@ -699,12 +657,12 @@ async function refreshPulse(){
     if(height !== pulseLastHeight){
       if(pulseLastHeight !== null && pulseLastBeatMs !== null){
         blockIntervalsMs.push(now - pulseLastBeatMs);
-        if(blockIntervalsMs.length > PULSE_SPARK_BARS) blockIntervalsMs.shift();
+        if(blockIntervalsMs.length > SPARK_BARS) blockIntervalsMs.shift();
       }
       pulseLastHeight = height;
       pulseLastBeatMs = now;
 
-      const heightEl = document.getElementById('pulse-height');
+      const heightEl = document.getElementById('stat-height');
       heightEl.textContent = fmt(height);
       heightEl.classList.add('flash');
       setTimeout(() => heightEl.classList.remove('flash'), 450);
@@ -714,7 +672,7 @@ async function refreshPulse(){
 
       if(blockIntervalsMs.length){
         const avgMs = blockIntervalsMs.reduce((a,b) => a+b, 0) / blockIntervalsMs.length;
-        document.getElementById('pulse-blocktime').textContent = (avgMs/1000).toFixed(1) + 's';
+        document.getElementById('stat-blocktime').textContent = (avgMs/1000).toFixed(1) + 's';
       }
       renderSparkline();
     }
@@ -729,13 +687,13 @@ async function refreshValidatorCount(){
   try{
     const r = await fetch('mainnet-status.json?t=' + Date.now(), {cache:'no-store'});
     const s = await r.json();
-    document.getElementById('pulse-validators').textContent = s.active_validators;
+    document.getElementById('stat-validators').textContent = s.active_validators;
   }catch(e){ /* non-critical */ }
 }
 refreshValidatorCount();
 setInterval(refreshValidatorCount, 30000);
 
-// --- tabs ---
+// --- onboarding tabs ---
 window.switchTab = function(tab){
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
   document.getElementById('panel-connect').style.display = tab === 'connect' ? 'block' : 'none';
@@ -746,15 +704,18 @@ window.switchTab = function(tab){
 function showModal(id){ document.getElementById(id).classList.add('show'); }
 window.closeModal = function(id){ document.getElementById(id).classList.remove('show'); };
 
-window.switchActionTab = function(tab){
-  document.querySelectorAll('.action-tab').forEach(t => t.classList.toggle('active', t.dataset.atab === tab));
-  const recv = document.getElementById('panel-receive');
-  const send = document.getElementById('panel-send');
-  recv.style.display = tab === 'receive' ? 'block' : 'none';
-  send.style.display = tab === 'send' ? 'block' : 'none';
-  (tab === 'receive' ? recv : send).classList.remove('fade-in');
-  void (tab === 'receive' ? recv : send).offsetWidth;
-  (tab === 'receive' ? recv : send).classList.add('fade-in');
+// --- sidebar nav (post-connect) ---
+window.switchNav = function(nav){
+  if(!myAddress) return;
+  document.querySelectorAll('.navitem[data-nav]').forEach(t => t.classList.toggle('active', t.dataset.nav === nav));
+  ['overview','receive','send','activity'].forEach(n => {
+    const el = document.getElementById('view-' + n);
+    if(!el) return;
+    el.style.display = n === nav ? 'block' : 'none';
+  });
+  const active = document.getElementById('view-' + nav);
+  if(active){ active.classList.remove('fade-in'); void active.offsetWidth; active.classList.add('fade-in'); }
+  if(nav === 'send') cancelReview();
 };
 
 // --- extension connect (Keplr / Leap / Cosmostation-as-Keplr) ---
@@ -813,7 +774,7 @@ window.confirmMnemonicSaved = async function(){
   }
 };
 
-// --- import existing wallet: individual word boxes, not a raw textarea ---
+// --- import: individual word boxes, paste-to-fill-all ---
 let seedLength = 12;
 
 window.setSeedLength = function(n){
@@ -854,7 +815,7 @@ function renderSeedGrid(){
     });
     input.addEventListener('keydown', e => {
       const inputs = Array.from(grid.querySelectorAll('input'));
-      if((e.key === ' ' || e.key === 'Enter' || e.key === 'Tab') && e.key !== 'Tab'){
+      if((e.key === ' ' || e.key === 'Enter') ){
         e.preventDefault();
         if(inputs[i + 1]) inputs[i + 1].focus();
       } else if(e.key === 'Backspace' && !input.value && inputs[i - 1]){
@@ -865,7 +826,7 @@ function renderSeedGrid(){
 }
 renderSeedGrid();
 
-// --- activate a signer (extension or local) and switch to connected view ---
+// --- activate signer and switch to the connected dashboard ---
 async function activateSigner(signer, address, label, isLocal){
   signingClient = await SigningStargateClient.connectWithSigner(RPC, signer, {
     gasPrice: GasPrice.fromString("0.001" + DENOM),
@@ -873,18 +834,21 @@ async function activateSigner(signer, address, label, isLocal){
   myAddress = address;
 
   document.getElementById('my-address').textContent = address;
+  document.getElementById('sb-address').textContent = address;
   document.getElementById('receive-address').textContent = address;
   document.getElementById('conn-label').textContent = label;
   document.getElementById('save-device-link').style.display = isLocal ? 'inline' : 'none';
+  document.getElementById('sidebar-connected-foot').style.display = 'block';
+  document.getElementById('stat-balance-wrap').style.display = 'flex';
+
   document.getElementById('view-disconnected').style.display = 'none';
   const connected = document.getElementById('view-connected');
   connected.style.display = 'block';
   connected.classList.remove('fade-in'); void connected.offsetWidth; connected.classList.add('fade-in');
-  switchActionTab('send');
-  cancelReview();
+  switchNav('overview');
 
   const canvas = document.getElementById('receive-qr');
-  QRCode.toCanvas(canvas, address, { width: 200, margin: 1, color: { dark: '#16171a', light: '#ffffff' } });
+  QRCode.toCanvas(canvas, address, { width: 200, margin: 1, color: { dark: '#0b0e11', light: '#ffffff' } });
 
   await refreshBalance();
   await loadActivity();
@@ -898,6 +862,8 @@ window.disconnectWallet = function(){
   pendingSend = null;
   document.getElementById('view-connected').style.display = 'none';
   document.getElementById('view-disconnected').style.display = 'block';
+  document.getElementById('sidebar-connected-foot').style.display = 'none';
+  document.getElementById('stat-balance-wrap').style.display = 'none';
   checkSavedWallet();
 };
 
@@ -912,21 +878,24 @@ window.refreshBalance = async function(){
     const data = await r.json();
     const bal = (data.balances || []).find(b => b.denom === DENOM);
     const amountUnxrl = bal ? Number(bal.amount) : 0;
+
     const balEl = document.getElementById('my-balance');
-    const prevText = balEl.textContent.replace(/,/g, '');
-    const prev = prevText === '—' || prevText === '' ? 0 : Number(prevText);
-    animateNumber(balEl, prev, amountUnxrl / 1e6, 500);
+    const prevText = (balEl.textContent.match(/^[\d,.]+/) || ['0'])[0].replace(/,/g, '');
+    const prev = Number(prevText) || 0;
+    animateNumber(balEl, prev, amountUnxrl / 1e6, 500, '<span class="denom">NXRL</span>');
+
     document.getElementById('send-balance-hint').textContent = fmtNxrl(amountUnxrl);
+    document.getElementById('stat-balance').innerHTML = fmtNxrl(amountUnxrl) + '<small>NXRL</small>';
     window.__lastBalanceUnxrl = bal ? BigInt(bal.amount) : 0n;
   }catch(e){
     document.getElementById('my-balance').textContent = '—';
   }
 };
 
-// --- recent activity (merges sent + received via RPC tx_search; REST tx-events
-// endpoint returns "Not Implemented" on this chain's gateway build, so RPC is used) ---
-async function rpcTxSearch(query){
-  const url = `${RPC}tx_search?query=${encodeURIComponent('"' + query + '"')}&order_by=%22desc%22&per_page=5`;
+// --- recent activity (merges sent + received via RPC tx_search; REST
+// tx-events endpoint returns "Not Implemented" on this chain's build) ---
+async function rpcTxSearch(query, limit){
+  const url = `${RPC}tx_search?query=${encodeURIComponent('"' + query + '"')}&order_by=%22desc%22&per_page=${limit}`;
   const r = await fetch(url);
   if(!r.ok) throw new Error('HTTP ' + r.status);
   const data = await r.json();
@@ -958,50 +927,47 @@ function parseSendTx(tx, myAddr){
   return null;
 }
 
+function renderActivityTable(rows){
+  if(rows.length === 0) return '<div class="activity-empty">No transactions yet</div>';
+  return `<table class="tx-table"><thead><tr><th>Type</th><th>Counterparty</th><th class="r">Amount</th><th class="r">Block</th></tr></thead><tbody>` +
+    rows.map(tx => `
+      <tr>
+        <td><span class="tx-dir"><span class="tx-icon ${tx.direction}">${tx.direction === 'out' ? '↑' : '↓'}</span>${tx.direction === 'out' ? 'Sent' : 'Received'}</span></td>
+        <td class="tx-cp">${tx.counterparty}</td>
+        <td class="r tx-amt ${tx.direction}">${tx.direction === 'out' ? '-' : '+'}${fmtNxrl(tx.amount)}</td>
+        <td class="r tx-height">#${fmt(tx.height)}</td>
+      </tr>
+    `).join('') + `</tbody></table>`;
+}
+
 window.loadActivity = async function(){
-  const listEl = document.getElementById('activity-list');
+  const previewEl = document.getElementById('activity-list-preview');
+  const fullEl = document.getElementById('activity-list-full');
   if(!myAddress) return;
   try{
     const [sent, received] = await Promise.all([
-      rpcTxSearch(`message.sender='${myAddress}'`),
-      rpcTxSearch(`transfer.recipient='${myAddress}'`),
+      rpcTxSearch(`message.sender='${myAddress}'`, 15),
+      rpcTxSearch(`transfer.recipient='${myAddress}'`, 15),
     ]);
     const byHash = new Map();
     [...sent, ...received].forEach(tx => byHash.set(tx.hash, tx));
     const merged = [...byHash.values()]
       .map(tx => parseSendTx(tx, myAddress))
       .filter(Boolean)
-      .sort((a,b) => Number(b.height) - Number(a.height))
-      .slice(0, 5);
+      .sort((a,b) => Number(b.height) - Number(a.height));
 
-    if(merged.length === 0){
-      listEl.innerHTML = '<div class="activity-empty">No transactions yet</div>';
-      return;
-    }
-    listEl.innerHTML = merged.map(tx => `
-      <div class="activity-row">
-        <div class="activity-left">
-          <div class="activity-icon ${tx.direction}">${tx.direction === 'out' ? '↑' : '↓'}</div>
-          <div class="activity-meta">
-            <div class="dir">${tx.direction === 'out' ? 'Sent' : 'Received'}</div>
-            <div class="cp">${tx.direction === 'out' ? 'to ' : 'from '}${tx.counterparty}</div>
-          </div>
-        </div>
-        <div class="activity-right">
-          <div class="amt ${tx.direction}">${tx.direction === 'out' ? '-' : '+'}${fmtNxrl(tx.amount)}</div>
-          <div class="t">#${fmt(tx.height)}</div>
-        </div>
-      </div>
-    `).join('');
+    previewEl.innerHTML = renderActivityTable(merged.slice(0, 3));
+    fullEl.innerHTML = renderActivityTable(merged.slice(0, 15));
   }catch(e){
-    listEl.innerHTML = '<div class="activity-empty">Activity unavailable</div>';
+    previewEl.innerHTML = '<div class="activity-empty">Activity unavailable</div>';
+    fullEl.innerHTML = '<div class="activity-empty">Activity unavailable</div>';
   }
 };
 
 window.setMax = function(){
   const bal = window.__lastBalanceUnxrl || 0n;
   if(bal === 0n) return;
-  const buffer = 50000n; // 0.05 NXRL gas buffer
+  const buffer = 50000n;
   const spendable = bal > buffer ? bal - buffer : 0n;
   const whole = spendable / 1000000n;
   const frac = (spendable % 1000000n).toString().padStart(6, '0');
@@ -1179,7 +1145,7 @@ window.forgetDevice = function(){
   }
 };
 
-// --- import existing wallet (seed-box grid, not a raw textarea) ---
+// --- import existing wallet (seed-box grid) ---
 window.importWallet = async function(){
   const errEl = document.getElementById('import-error');
   errEl.style.display = 'none';
