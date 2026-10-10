@@ -1,17 +1,17 @@
 {
   "chain_id": "nexarail-mainnet-2",
   "app_version": "0.37.16",
-  "height": 850433,
-  "block_time": "2026-10-10T12:01:57.196747742Z",
+  "height": 850601,
+  "block_time": "2026-10-10T12:06:50.529677988Z",
   "catching_up": false,
-  "peers": 22,
+  "peers": 23,
   "active_validators": 22,
-  "total_bonded_unxrl": "25109022817668",
+  "total_bonded_unxrl": "25109017379868",
   "faucet_unxrl": 160554160671877,
   "validators": [
     {
       "moniker": "Vicky_Pulsican",
-      "tokens_unxrl": "10592000000",
+      "tokens_unxrl": "10590940800",
       "commission": "0.100000000000000000"
     },
     {
@@ -26,7 +26,7 @@
     },
     {
       "moniker": "OneNov",
-      "tokens_unxrl": "10590000000",
+      "tokens_unxrl": "10588941000",
       "commission": "0.100000000000000000"
     },
     {
@@ -41,7 +41,7 @@
     },
     {
       "moniker": "airSintez",
-      "tokens_unxrl": "10499949900",
+      "tokens_unxrl": "10498900000",
       "commission": "0.100000000000000000"
     },
     {
@@ -51,7 +51,7 @@
     },
     {
       "moniker": "UTSA",
-      "tokens_unxrl": "500000000",
+      "tokens_unxrl": "499950000",
       "commission": "0.100000000000000000"
     },
     {
@@ -61,7 +61,7 @@
     },
     {
       "moniker": "StingRay",
-      "tokens_unxrl": "10598000000",
+      "tokens_unxrl": "10596940200",
       "commission": "0.100000000000000000"
     },
     {
@@ -71,12 +71,12 @@
     },
     {
       "moniker": "AlxVoy \u26a1 ANODE.TEAM",
-      "tokens_unxrl": "10599000000",
+      "tokens_unxrl": "10597940100",
       "commission": "0.100000000000000000"
     },
     {
       "moniker": "BonyNode\ud83d\udc51\u221e",
-      "tokens_unxrl": "500000000",
+      "tokens_unxrl": "499950000",
       "commission": "0.050000000000000000"
     },
     {
@@ -116,7 +116,7 @@
     },
     {
       "moniker": "NODESYNC",
-      "tokens_unxrl": "500000000",
+      "tokens_unxrl": "499950000",
       "commission": "0.100000000000000000"
     }
   ],
@@ -127,5 +127,5 @@
   "binary_url": "https://github.com/Bookings-cpu/nexarail/releases/download/mainnet-genesis-nexarail-mainnet-2/nexaraild-linux-amd64",
   "min_gas_price": "0.001unxrl",
   "note": "Fresh relaunch on Hetzner Cloud after the August 2026 outage. New chain-id, new genesis, real tokenomics.",
-  "updated_at": "2026-10-10T12:02:00Z"
+  "updated_at": "2026-10-10T12:07:00Z"
 }
