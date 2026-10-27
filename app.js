@@ -113,7 +113,7 @@ const MAXB = 30;
 let blocks = [];            // newest first: {height, proposer, txs, timeMs}
 let consMap = {};           // proposer hex -> moniker
 let lastArrival = 0, netState = "", catchingUp = false, renderedTop = 0, rpcDown = false;
-let ws = null, wsBackoff = 2000, pollTimer = null, polling = false;
+let ws = null, wsBackoff = 2000, wsFails = 0, pollTimer = null, polling = false;   // give up on WS after 3 straight failures; polling covers it
 
 function setLive(state){
   if (state === netState) return; netState = state;
@@ -188,11 +188,11 @@ function renderBlocks(){
 setInterval(() => { document.querySelectorAll(".blk .a").forEach(a => { a.textContent = ago(Number(a.dataset.t)); }); updateHealth(); }, 1000);
 
 function openWS(){
-  if (ws || document.hidden) return;
+  if (ws || document.hidden || wsFails >= 3) return;
   let opened = false;
   try { ws = new WebSocket(ep().ws); } catch { ws = null; return startPolling(); }
   const to = setTimeout(() => { if (!opened) ws?.close(); }, 6000);
-  ws.onopen = () => { opened = true; rpcDown = false; clearTimeout(to); wsBackoff = 2000; stopPolling(); $("blk-meta").textContent = "streaming";
+  ws.onopen = () => { opened = true; wsFails = 0; rpcDown = false; clearTimeout(to); wsBackoff = 2000; stopPolling(); $("blk-meta").textContent = "streaming";
     ws.send(JSON.stringify({ jsonrpc: "2.0", method: "subscribe", id: 1, params: { query: "tm.event='NewBlockHeader'" } })); };
   ws.onmessage = ev => { try {
     const v = JSON.parse(ev.data).result?.data?.value; if (!v?.header) return;
@@ -200,7 +200,7 @@ function openWS(){
     if (blocks.length && b.height > blocks[0].height + 1) backfill(b.height - 1).then(() => addBlocks([b])).catch(() => addBlocks([b]));
     else addBlocks([b]);
   } catch {} };
-  ws.onclose = () => { clearTimeout(to); ws = null; if (document.hidden) return;
+  ws.onclose = () => { clearTimeout(to); ws = null; if (!opened) wsFails++; if (document.hidden) return;
     startPolling(); setTimeout(openWS, wsBackoff); wsBackoff = Math.min(wsBackoff * 2, 60000); };
   ws.onerror = () => ws?.close();
 }

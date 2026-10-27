@@ -60,6 +60,7 @@ footer a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--lin
     <div class="refreshed">refreshed <b id="age">—</b> · <span id="src">—</span></div>
   </header>
 
+  <div class="error" style="display:block;border-color:rgba(251,191,36,.35);color:#fbbf24;background:rgba(251,191,36,.07)">nexarail-testnet-1 is retired. The figures below are its final snapshot and no longer update. Live network: <a href="mainnet.html" style="color:inherit">mainnet status</a> · <a href="app.html" style="color:inherit">wallet</a> · <a href="explorer/" style="color:inherit">explorer</a></div>
   <div id="error" class="error"></div>
 
   <div class="grid">
@@ -115,6 +116,7 @@ footer a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--lin
 </div>
 
 <script>
+const ESC={'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}; const esc=v=>String(v??'').replace(/[&<>"']/g,c=>ESC[c]);
 const ENDPOINT = window.NEXARAIL_STATUS_URL || 'status.json';
 document.getElementById('endpoint').textContent = ENDPOINT;
 document.getElementById('src').textContent = ENDPOINT.startsWith('http') ? new URL(ENDPOINT).host : ENDPOINT;
@@ -180,7 +182,7 @@ function render(s){
     const share = Number(v.tokens_unxrl)/Number(s.total_bonded_unxrl||1)*100;
     const cls = clsForMoniker(v.moniker);
     const tr=document.createElement('tr');
-    tr.innerHTML = '<td>'+v.moniker+'</td>'+
+    tr.innerHTML = '<td>'+esc(v.moniker)+'</td>'+
       '<td class="r">'+fmtNxrl(v.tokens_unxrl)+' NXRL</td>'+
       '<td class="r">'+share.toFixed(2)+'%</td>'+
       '<td><span class="tag '+(cls?'coord':'ok')+'">'+(cls?'coord':'community')+'</span></td>';
@@ -195,7 +197,7 @@ function render(s){
   } else {
     let h = '<table><thead><tr><th>Moniker</th><th class="r">Stake</th><th>Status</th></tr></thead><tbody>';
     jailed.forEach(v=>{
-      h += '<tr><td>'+v.moniker+'</td><td class="r">'+fmtNxrl(v.tokens_unxrl)+' NXRL</td>'+
+      h += '<tr><td>'+esc(v.moniker)+'</td><td class="r">'+fmtNxrl(v.tokens_unxrl)+' NXRL</td>'+
         '<td><span class="tag jail">'+v.status.replace('BOND_STATUS_','')+'</span></td></tr>';
     });
     h+='</tbody></table>';

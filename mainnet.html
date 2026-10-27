@@ -47,6 +47,7 @@ td.r,th.r{text-align:right}
 .tag.coord{color:var(--accent);border-color:rgba(123,227,197,.3)}
 .tag.ok{color:var(--ok);border-color:rgba(0,209,139,.3)}
 .tag.jail{color:var(--bad);border-color:rgba(255,85,102,.3)}
+.tag.warn{color:#fbbf24;border-color:rgba(251,191,36,.3)}
 footer{margin-top:48px;font-size:11px;color:var(--dim);text-align:center;letter-spacing:.05em}
 footer a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--line)}
 .kbd{font-family:'SF Mono',Menlo,Consolas,monospace;font-size:11px;background:var(--panel);padding:1px 5px;border-radius:3px;border:1px solid var(--line);color:var(--dim)}
@@ -84,7 +85,7 @@ footer a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--lin
       <div style="overflow-x:auto">
       <table id="vset">
         <thead>
-        <tr><th>Moniker</th><th class="r">Stake</th><th class="r">Share</th><th>Class</th></tr>
+        <tr><th>Moniker</th><th class="r">Stake</th><th class="r">Share</th><th class="r">Uptime</th><th>Class</th></tr>
         </thead>
         <tbody></tbody>
       </table>
@@ -120,6 +121,7 @@ footer a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--lin
           <div class="big" id="coord-custody">—</div>
         </div>
       </div>
+      <div class="sub" id="custody-note" style="display:none;margin:4px 0 8px;color:#fbbf24">Custody totals aren't tracked for nexarail-mainnet-2 yet — the status feed doesn't publish them, so no number is shown rather than a false zero.</div>
       <div class="sub" style="margin-top:4px">
         Per the
         <a href="https://github.com/Bookings-cpu/nexarail/blob/main/docs/mainnet/COORD_REWARDS_COMMITMENT_2026-06-21.md" style="color:var(--accent)">coord rewards custody commitment</a>,
@@ -134,117 +136,104 @@ footer a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--lin
 </div>
 
 <script>
+// Validators, jail status and uptime come live from the chain's REST API; the cached
+// mainnet-status.json feed is only used for faucet/genesis metadata.
+// All chain-sourced strings (monikers) are untrusted: they go through esc() / textContent only.
 const ENDPOINT = window.NEXARAIL_STATUS_URL || 'mainnet-status.json';
-document.getElementById('endpoint').textContent = ENDPOINT;
-document.getElementById('src').textContent = ENDPOINT.startsWith('http') ? new URL(ENDPOINT).host : ENDPOINT;
+const RPC = 'https://5-161-72-48.nip.io/rpc/', REST = 'https://5-161-72-48.nip.io';
+document.getElementById('endpoint').textContent = ENDPOINT + ' + live chain API';
+document.getElementById('src').textContent = 'live chain';
 
+const ESC = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ESC[c]);
 function fmt(n){return new Intl.NumberFormat('en-US').format(n)}
 function fmtNxrl(unxrl){return new Intl.NumberFormat('en-US',{maximumFractionDigits:4}).format(Number(unxrl)/1_000_000)}
 function ago(iso){
-  const s = (Date.now() - new Date(iso).getTime())/1000;
+  const s = Math.max(0,(Date.now() - new Date(iso).getTime())/1000);
   if(s<60) return Math.round(s)+'s ago';
   if(s<3600) return Math.round(s/60)+'m ago';
   if(s<86400) return Math.round(s/3600)+'h ago';
   return Math.round(s/86400)+'d ago';
 }
-function setDot(el, level){
-  el.querySelectorAll('.dot').forEach(d=>d.className='dot '+level);
-}
-function clsForMoniker(m){
-  if(m && m.startsWith('nxrl-controlled-')) return 'coord';
-  if(['NODESYNC','UTSA'].includes(m)) return 'coord';
-  return '';
+const isCoord = m => /^nexarail-(alpha|bravo|charlie|delta|echo)$/.test(m || '');
+const getJSON = async url => { const r = await fetch(url, {cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); };
+
+// bech32 encode, to map a validator's consensus pubkey to its nxrvalcons signing-info address
+const B32 = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
+function polymod(v){ const G=[0x3b6a57b2,0x26508e6d,0x1ea119fa,0x3d4233dd,0x2a1462b3]; let c=1;
+  for(const x of v){ const b=c>>>25; c=((c&0x1ffffff)<<5)^x; for(let i=0;i<5;i++) if((b>>>i)&1) c^=G[i]; } return c>>>0; }
+function bech32(hrp, bytes){ const out=[]; let acc=0, bits=0;
+  for(const x of bytes){ acc=(acc<<8)|x; bits+=8; while(bits>=5){ bits-=5; out.push((acc>>>bits)&31); } }
+  if(bits) out.push((acc<<(5-bits))&31);
+  const ex=[...hrp].map(c=>c.charCodeAt(0)>>5).concat([0],[...hrp].map(c=>c.charCodeAt(0)&31));
+  const m=polymod(ex.concat(out,[0,0,0,0,0,0]))^1;
+  return hrp+'1'+out.concat([0,1,2,3,4,5].map(i=>(m>>>(5*(5-i)))&31)).map(i=>B32[i]).join(''); }
+async function valcons(b64){ const h=new Uint8Array(await crypto.subtle.digest('SHA-256', Uint8Array.from(atob(b64),c=>c.charCodeAt(0)))); return bech32('nxrvalcons', h.slice(0,20)); }
+
+async function refreshFeed(){
+  try{
+    const s = await getJSON(ENDPOINT + '?t=' + Date.now());
+    document.getElementById('chain-id').textContent = s.chain_id;
+    document.getElementById('faucet').textContent = fmtNxrl(s.faucet_unxrl||0) + ' NXRL';
+    document.getElementById('peers').textContent = s.peers ?? '—';
+    document.getElementById('age').textContent = (s.updated_at || s.refreshed) ? ago(s.updated_at || s.refreshed) : '—';
+    const crc = s.coord_rewards_custody;
+    document.getElementById('coord-pending').textContent = crc ? fmtNxrl(crc.pending_unxrl||0) + ' NXRL' : '—';
+    document.getElementById('coord-custody').textContent = crc ? fmtNxrl(crc.withdrawn_held_unxrl||0) + ' NXRL' : '—';
+    if(!crc) document.getElementById('custody-note').style.display = 'block';
+  }catch(e){ /* feed is optional now; live data below still renders */ }
 }
 
-async function refresh(){
+async function refreshChain(){
   try{
-    const r = await fetch(ENDPOINT + '?t=' + Date.now(), {cache:'no-store'});
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    const s = await r.json();
-    render(s);
+    const [vd, sd, sp, ni] = await Promise.all([
+      getJSON(REST+'/cosmos/staking/v1beta1/validators?pagination.limit=300'),
+      getJSON(REST+'/cosmos/slashing/v1beta1/signing_infos?pagination.limit=300'),
+      getJSON(REST+'/cosmos/slashing/v1beta1/params'),
+      getJSON(REST+'/cosmos/base/tendermint/v1beta1/node_info').catch(()=>null)]);
+    const window_ = Number(sp.params.signed_blocks_window), jailAt = window_ * (1 - Number(sp.params.min_signed_per_window));
+    const missed = Object.fromEntries((sd.info||[]).map(i=>[i.address, Number(i.missed_blocks_counter)]));
+    const vs = await Promise.all((vd.validators||[]).map(async v=>({ v, cons: await valcons(v.consensus_pubkey.key).catch(()=>'') })));
+    const bonded = vs.filter(x=>x.v.status==='BOND_STATUS_BONDED' && !x.v.jailed).sort((a,b)=>Number(b.v.tokens)-Number(a.v.tokens));
+    const total = bonded.reduce((a,x)=>a+Number(x.v.tokens),0);
+    document.getElementById('val-count').textContent = bonded.length;
+    document.getElementById('bonded-total').textContent = fmtNxrl(total) + ' NXRL bonded';
+    if(ni) document.getElementById('app-version').textContent = (ni.application_version?.version ? ni.application_version.version + ' · ' : '') + 'SDK ' + (ni.application_version?.cosmos_sdk_version || '?') + ' · CometBFT ' + (ni.default_node_info?.version || '?');
+
+    document.querySelector('#vset tbody').innerHTML = bonded.map(({v,cons})=>{
+      const m = v.description.moniker, mb = missed[cons], up = mb==null ? null : (1 - mb/window_)*100;
+      const upCls = mb==null ? '' : mb > jailAt*0.5 ? 'jail' : mb > window_*0.05 ? 'warn' : 'ok';
+      return '<tr><td>'+esc(m)+'</td><td class="r">'+fmtNxrl(v.tokens)+' NXRL</td><td class="r">'+(Number(v.tokens)/total*100).toFixed(2)+'%</td>'+
+        '<td class="r" title="'+(mb==null?'':esc(mb+' missed of last '+fmt(window_)+' blocks; jailed at '+fmt(jailAt)))+'"><span class="tag '+upCls+'">'+(up==null?'—':up.toFixed(1)+'%')+'</span></td>'+
+        '<td><span class="tag '+(isCoord(m)?'coord':'ok')+'">'+(isCoord(m)?'coord':'community')+'</span></td></tr>';
+    }).join('');
+
+    const out = vs.filter(x=>x.v.jailed || x.v.status!=='BOND_STATUS_BONDED');
+    const j = document.getElementById('jailed');
+    j.innerHTML = !out.length ? '<div class="sub" style="padding:4px 0">No jailed or unbonding validators ✓</div>' :
+      '<table><thead><tr><th>Moniker</th><th class="r">Stake</th><th>Status</th></tr></thead><tbody>' +
+      out.map(({v})=>'<tr><td>'+esc(v.description.moniker)+'</td><td class="r">'+fmtNxrl(v.tokens)+' NXRL</td><td><span class="tag jail">'+
+        (v.jailed?'JAILED · ':'')+esc(v.status.replace('BOND_STATUS_',''))+'</span></td></tr>').join('') + '</tbody></table>';
     document.getElementById('error').style.display='none';
   }catch(e){
-    const err=document.getElementById('error');
-    err.textContent = 'Status feed unreachable: '+e.message+'  ·  endpoint '+ENDPOINT;
-    err.style.display='block';
+    const err=document.getElementById('error'); err.textContent = 'Chain API unreachable: '+e.message+' — retrying'; err.style.display='block';
   }
 }
 
-function render(s){
-  // Top metrics (height/block-time/catching-up are overwritten by the live RPC
-  // poll below — this cached feed only refreshes every 5 min, which otherwise
-  // produces a false "stalled" reading on a 1.3s-block-time chain)
-  document.getElementById('height').textContent = fmt(s.height);
-  document.getElementById('val-count').textContent = s.active_validators;
-  document.getElementById('peers').textContent = s.peers;
-  document.getElementById('chain-id').textContent = s.chain_id;
-  document.getElementById('app-version').textContent = s.app_version || '—';
-  document.getElementById('faucet').textContent = fmtNxrl(s.faucet_unxrl||0) + ' NXRL';
-  document.getElementById('block-time').textContent = s.block_time ? ago(s.block_time) : '—';
-  document.getElementById('bonded-total').textContent = fmtNxrl(s.total_bonded_unxrl||0) + ' NXRL bonded';
-
-  // Coord rewards custody (post-proposal-1 accrual)
-  const crc = s.coord_rewards_custody || {};
-  document.getElementById('coord-pending').textContent = fmtNxrl(crc.pending_unxrl||0) + ' NXRL';
-  document.getElementById('coord-custody').textContent = fmtNxrl(crc.withdrawn_held_unxrl||0) + ' NXRL';
-
-  // Validators
-  const tbody = document.querySelector('#vset tbody');
-  tbody.innerHTML = '';
-  (s.validators||[]).sort((a,b)=>Number(b.tokens_unxrl)-Number(a.tokens_unxrl)).forEach(v=>{
-    const share = Number(v.tokens_unxrl)/Number(s.total_bonded_unxrl||1)*100;
-    const cls = clsForMoniker(v.moniker);
-    const tr=document.createElement('tr');
-    tr.innerHTML = '<td>'+v.moniker+'</td>'+
-      '<td class="r">'+fmtNxrl(v.tokens_unxrl)+' NXRL</td>'+
-      '<td class="r">'+share.toFixed(2)+'%</td>'+
-      '<td><span class="tag '+(cls?'coord':'ok')+'">'+(cls?'coord':'community')+'</span></td>';
-    tbody.appendChild(tr);
-  });
-
-  // Jailed
-  const j = document.getElementById('jailed');
-  const jailed = (s.jailed||[]);
-  if(!jailed.length){
-    j.innerHTML = '<div class="sub" style="padding:4px 0">No jailed validators ✓</div>';
-  } else {
-    let h = '<table><thead><tr><th>Moniker</th><th class="r">Stake</th><th>Status</th></tr></thead><tbody>';
-    jailed.forEach(v=>{
-      h += '<tr><td>'+v.moniker+'</td><td class="r">'+fmtNxrl(v.tokens_unxrl)+' NXRL</td>'+
-        '<td><span class="tag jail">'+v.status.replace('BOND_STATUS_','')+'</span></td></tr>';
-    });
-    h+='</tbody></table>';
-    j.innerHTML = h;
-  }
-
-  // Refresh label
-  document.getElementById('age').textContent = s.refreshed ? ago(s.refreshed) : 'just now';
-}
-
-const RPC = 'https://5-161-72-48.nip.io/rpc/';
 async function refreshLive(){
-  const blockAgeEl = document.getElementById('block-age');
-  const catchEl = document.getElementById('catching-up');
+  const blockAgeEl = document.getElementById('block-age'), catchEl = document.getElementById('catching-up');
   try{
-    const r = await fetch(RPC + 'status?t=' + Date.now(), {cache:'no-store'});
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    const data = await r.json();
-    const sync = data.result.sync_info;
+    const sync = (await getJSON(RPC + 'status?t=' + Date.now())).result.sync_info;
     document.getElementById('height').textContent = fmt(sync.latest_block_height);
+    document.getElementById('block-time').textContent = ago(sync.latest_block_time);
     const ageS = (Date.now() - new Date(sync.latest_block_time).getTime())/1000;
-    blockAgeEl.innerHTML = '<span class="dot '+(ageS<15?'ok':ageS<60?'warn':'bad')+'"></span>' +
-      (ageS<15?'producing':ageS<60?'slow':'stalled') + ' · ' + ago(sync.latest_block_time);
-    catchEl.innerHTML = '<span class="dot '+(sync.catching_up?'warn':'ok')+'"></span>' +
-      (sync.catching_up?'catching up':'in sync');
-  }catch(e){
-    blockAgeEl.innerHTML = '<span class="dot bad"></span>RPC unreachable';
-  }
+    blockAgeEl.innerHTML = '<span class="dot '+(ageS<15?'ok':ageS<60?'warn':'bad')+'"></span>' + (ageS<15?'producing':ageS<60?'slow':'stalled') + ' · ' + ago(sync.latest_block_time);
+    catchEl.innerHTML = '<span class="dot '+(sync.catching_up?'warn':'ok')+'"></span>' + (sync.catching_up?'catching up':'in sync');
+  }catch(e){ blockAgeEl.innerHTML = '<span class="dot bad"></span>RPC unreachable'; }
 }
 
-refresh();
-refreshLive();
-setInterval(refresh, 30000);
-setInterval(refreshLive, 10000);
+refreshFeed(); refreshChain(); refreshLive();
+setInterval(refreshFeed, 60000); setInterval(refreshChain, 30000); setInterval(refreshLive, 5000);
 </script>
 </body>
 </html>
