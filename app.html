@@ -2,355 +2,79 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://5-161-72-48.nip.io wss://5-161-72-48.nip.io; manifest-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
 <title>NexaRail — Wallet & Network</title>
+<meta name="description" content="NexaRail mainnet wallet and live network dashboard. Send, receive and stake NXRL. Keys never leave your browser.">
+<meta name="theme-color" content="#07090d">
+<meta property="og:title" content="NexaRail — Wallet & Network">
+<meta property="og:description" content="Live NexaRail mainnet: blocks, validators, staking. Self-custody wallet in your browser.">
+<meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%23f5c451'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://5-161-72-48.nip.io" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#07090d;
-  --surface:rgba(255,255,255,.035);
-  --surface-2:rgba(255,255,255,.06);
-  --line:rgba(255,255,255,.08);
-  --line-2:rgba(255,255,255,.14);
-  --txt:#eef0f4;
-  --dim:#8b93a3;
-  --dim-2:#5c6475;
-  --gold:#f5c451;
-  --gold-2:#d9a21b;
-  --teal:#2dd4bf;
-  --violet:#a78bfa;
-  --green:#22c55e;
-  --red:#f43f5e;
-  --r:16px;
-}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0}
-body{
-  background:var(--bg);color:var(--txt);
-  font:14px/1.5 'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
-  min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;
-}
-body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:
-    radial-gradient(1100px 600px at 8% -10%, rgba(245,196,81,.13), transparent 60%),
-    radial-gradient(900px 600px at 105% 95%, rgba(45,212,191,.10), transparent 60%),
-    radial-gradient(700px 500px at 60% 40%, rgba(167,139,250,.05), transparent 60%);
-}
-body::after{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;
-  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
-  background-size:40px 40px;
-  mask-image:radial-gradient(ellipse at 50% 0%, #000 20%, transparent 75%);
-}
-.mono{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace}
-.tnum{font-variant-numeric:tabular-nums}
-
-@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideIn{from{opacity:0;transform:translateX(-12px);background:rgba(245,196,81,.12)}to{opacity:1;transform:translateX(0);background:transparent}}
-@keyframes ping{0%{transform:scale(.5);opacity:0}20%{opacity:.9}100%{transform:scale(2.6);opacity:0}}
-@keyframes beat{0%{transform:scale(1)}35%{transform:scale(1.7)}100%{transform:scale(1)}}
-@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(245,196,81,0)}50%{box-shadow:0 0 28px 2px rgba(245,196,81,.28)}}
-@keyframes shimmer{0%{background-position:-300px 0}100%{background-position:300px 0}}
-.rise{animation:rise .5s cubic-bezier(.16,1,.3,1) both}
-.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.1),rgba(255,255,255,.04));background-size:300px 100%;animation:shimmer 1.4s linear infinite;border-radius:6px;color:transparent!important}
-
-/* ===== shell ===== */
-.shell{display:flex;min-height:100vh;position:relative;z-index:1}
-.sidebar{
-  width:236px;flex-shrink:0;border-right:1px solid var(--line);
-  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0));
-  display:flex;flex-direction:column;padding:22px 14px;position:sticky;top:0;height:100vh;
-}
-.brand{display:flex;align-items:center;gap:10px;padding:4px 10px 0;margin-bottom:30px}
-.brand-mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--gold),#b8820e);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px -6px rgba(245,196,81,.7)}
-.brand-mark svg{width:16px;height:16px}
-.brand-name{font-size:16px;font-weight:800;letter-spacing:-.01em;color:#fff;line-height:1}
-.brand-sub{font-size:10px;color:var(--dim-2);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-top:3px}
-.navlabel{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim-2);font-weight:700;padding:0 12px;margin:8px 0 8px}
-.navitem{
-  display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:var(--dim);
-  font-size:13.5px;font-weight:600;cursor:pointer;transition:all .15s;margin-bottom:2px;border:1px solid transparent;background:none;width:100%;text-align:left;font-family:inherit;
-}
-.navitem svg{width:17px;height:17px;flex-shrink:0;opacity:.8}
-.navitem:hover{background:var(--surface);color:var(--txt)}
-.navitem.active{background:linear-gradient(90deg,rgba(245,196,81,.14),rgba(245,196,81,.03));color:#fff;border-color:rgba(245,196,81,.2)}
-.navitem.active svg{color:var(--gold);opacity:1}
-.navitem.locked{opacity:.4}
-.sidebar-spacer{flex:1}
-.sb-wallet{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface);display:none}
-.sb-wallet .row{display:flex;align-items:center;gap:10px}
-.sb-wallet .addr{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sb-wallet .bal{font-size:13px;font-weight:700;color:#fff}
-.sb-wallet button{margin-top:10px;width:100%;background:none;border:1px solid var(--line);color:var(--red);font-size:12px;font-weight:700;padding:8px;border-radius:8px;cursor:pointer;font-family:inherit}
-.sb-wallet button:hover{background:rgba(244,63,94,.1);border-color:rgba(244,63,94,.3)}
-.sb-foot{margin-top:12px;padding:0 12px}
-.sb-foot a{font-size:12px;color:var(--dim-2);text-decoration:none;font-weight:600}
-.sb-foot a:hover{color:var(--dim)}
-
-.main{flex:1;min-width:0;display:flex;flex-direction:column}
-
-/* ===== topbar ===== */
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;gap:20px;
-  padding:14px 28px;border-bottom:1px solid var(--line);
-  background:linear-gradient(180deg,rgba(7,9,13,.9),rgba(7,9,13,.6));backdrop-filter:blur(10px);
-  position:sticky;top:0;z-index:5;
-}
-.tb-left{display:flex;align-items:center;gap:22px}
-.livewrap{display:flex;align-items:center;gap:10px}
-.pulse{position:relative;width:10px;height:10px;display:flex;align-items:center;justify-content:center}
-.pulse i{position:absolute;inset:0;border-radius:50%;border:1.3px solid var(--gold);animation:ping 1.4s cubic-bezier(.2,.6,.4,1) infinite}
-.pulse i.b{animation-delay:.47s}.pulse i.c{animation-delay:.93s}
-.pulse b{position:relative;width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold)}
-.pulse b.beat{animation:beat .5s cubic-bezier(.2,.8,.3,1)}
-.livepill{font-size:10px;font-weight:900;letter-spacing:.1em;color:#1a1200;background:var(--gold);padding:2px 7px;border-radius:5px}
-.tb-stat{display:flex;flex-direction:column;line-height:1.15}
-.tb-stat .k{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim-2);font-weight:700}
-.tb-stat .v{font-size:15px;font-weight:800;color:#fff;transition:color .25s}
-.tb-stat .v.flash{color:var(--gold)}
-.tb-right{display:flex;align-items:center;gap:12px}
-.acct{display:none;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);padding:6px 12px 6px 6px;border-radius:999px}
-.acct .addr{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--dim)}
-.acct .bal{font-size:13px;font-weight:800;color:#fff}
-.identicon{border-radius:50%;flex-shrink:0;box-shadow:0 0 0 2px rgba(255,255,255,.08)}
-
-/* ===== content grid ===== */
-.content{flex:1;padding:24px 28px 48px;max-width:1360px;width:100%}
-.g3{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:18px;margin-bottom:18px}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
-.g1{margin-bottom:18px}
-@media (max-width:1180px){.g3{grid-template-columns:1fr 1fr}.g3 > :first-child{grid-column:1 / -1}}
-@media (max-width:900px){.g3,.g2{grid-template-columns:1fr}.sidebar{display:none}.content{padding:16px}}
-
-.card{
-  position:relative;border-radius:var(--r);padding:22px 24px;
-  background:linear-gradient(160deg,rgba(255,255,255,.055),rgba(255,255,255,.02));
-  border:1px solid var(--line);
-  box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 30px 60px -40px rgba(0,0,0,.9);
-  transition:border-color .2s;
-}
-.card::before{content:'';position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,196,81,.5),transparent);opacity:.6}
-.card:hover{border-color:var(--line-2)}
-.card.gold-glow{animation:glowPulse 4s ease-in-out infinite}
-.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.card-head h2{font-size:13px;font-weight:800;color:#fff;margin:0;letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
-.card-head h2 svg{width:15px;height:15px;color:var(--gold)}
-.card-head .meta{font-size:11px;color:var(--dim-2);font-weight:600}
-.eyebrow{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim-2);font-weight:800;margin:0 0 8px}
-
-/* balance hero */
-.hero-bal{display:flex;flex-direction:column;gap:16px;min-height:100%}
-.hero-top{display:flex;align-items:center;justify-content:space-between}
-.hero-id{display:flex;align-items:center;gap:12px}
-.hero-id .addr{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim)}
-.hero-id .lbl{font-size:10.5px;color:var(--dim-2);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-.hero-amount{font-size:52px;font-weight:900;letter-spacing:-.03em;line-height:1;color:#fff;background:linear-gradient(180deg,#fff,#cfd4dd);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero-amount .denom{font-size:16px;letter-spacing:0;color:var(--gold);-webkit-text-fill-color:var(--gold);margin-left:8px;font-weight:800}
-.hero-sub{font-size:12px;color:var(--dim)}
-.hero-actions{display:flex;gap:10px;margin-top:auto}
-.hero-actions button{flex:1}
-.chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--surface-2);color:var(--dim);border:1px solid var(--line)}
-.chip.ok{color:var(--green);border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.08)}
-
-/* onboarding inside hero slot */
-.tabs{display:flex;gap:2px;background:rgba(0,0,0,.35);border-radius:10px;padding:3px;margin-bottom:16px;border:1px solid var(--line)}
-.tab{flex:1;background:transparent;border:none;color:var(--dim);font-family:inherit;font-size:12.5px;font-weight:700;padding:8px;border-radius:7px;cursor:pointer;transition:all .15s}
-.tab.active{background:var(--surface-2);color:#fff}
-.walletgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.walletbtn{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 6px;cursor:pointer;transition:all .15s;color:var(--txt);font-family:inherit}
-.walletbtn:hover{border-color:rgba(245,196,81,.4);transform:translateY(-2px)}
-.walletbtn .badge{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#fff}
-.walletbtn .label{font-size:11px;font-weight:700}
-.badge.keplr{background:linear-gradient(135deg,#8a7dff,#5b4ce0)}.badge.leap{background:linear-gradient(135deg,#3fd19c,#17a874)}.badge.cosmostation{background:linear-gradient(135deg,#5ba3f5,#2f7fe6)}
-.hint{font-size:11.5px;color:var(--dim-2);line-height:1.6}
-
-/* network stats */
-.net-grid{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
-.donut{width:112px;height:112px;position:relative}
-.donut svg{width:100%;height:100%;transform:rotate(-90deg)}
-.donut .track{stroke:rgba(255,255,255,.07);fill:none}
-.donut .arc{stroke:url(#donutGrad);fill:none;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.16,1,.3,1)}
-.donut-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.donut-c .p{font-size:20px;font-weight:900;color:#fff;line-height:1}
-.donut-c .l{font-size:9.5px;color:var(--dim-2);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-top:3px}
-.kv{display:flex;flex-direction:column;gap:9px}
-.kv div{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:12px;color:var(--dim)}
-.kv b{color:#fff;font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12.5px}
-
-/* cadence chart */
-.chart{width:100%;height:92px;display:block}
-.chart-foot{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--dim-2)}
-.chart-foot b{color:#fff;font-weight:800;font-size:13px}
-.big-stat{font-size:34px;font-weight:900;letter-spacing:-.02em;color:#fff;line-height:1}
-.big-stat small{font-size:13px;color:var(--dim);font-weight:700;margin-left:4px}
-
-/* blocks feed */
-.blocks{display:flex;flex-direction:column}
-.blk{display:grid;grid-template-columns:84px 1fr 56px 64px;gap:12px;align-items:center;padding:9px 10px;border-radius:9px;font-size:12.5px;border-bottom:1px solid var(--line)}
-.blk:last-child{border-bottom:none}
-.blk.new{animation:slideIn .6s cubic-bezier(.16,1,.3,1) both}
-.blk .h{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--gold)}
-.blk .p{display:flex;align-items:center;gap:8px;min-width:0;color:var(--txt);font-weight:600}
-.blk .p span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.vdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;box-shadow:0 0 8px currentColor}
-.blk .t{font-family:'JetBrains Mono',monospace;color:var(--dim);text-align:right}
-.blk .a{font-size:11px;color:var(--dim-2);text-align:right;font-family:'JetBrains Mono',monospace}
-.blk-head{display:grid;grid-template-columns:84px 1fr 56px 64px;gap:12px;padding:0 10px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim-2);font-weight:800}
-.blk-head .r{text-align:right}
-
-/* validators */
-.vals{display:flex;flex-direction:column}
-.val{display:grid;grid-template-columns:1fr 120px 54px 52px;gap:12px;align-items:center;padding:9px 10px;border-bottom:1px solid var(--line);font-size:12.5px}
-.val:last-child{border-bottom:none}
-.val .n{display:flex;align-items:center;gap:9px;min-width:0;font-weight:600;color:#fff}
-.val .n span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bar{height:6px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden}
-.bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--teal),var(--gold));width:0;transition:width 1s cubic-bezier(.16,1,.3,1)}
-.val .pct{font-family:'JetBrains Mono',monospace;color:#fff;font-weight:700;text-align:right}
-.val .com{font-family:'JetBrains Mono',monospace;color:var(--dim-2);text-align:right;font-size:11.5px}
-.val-head{display:grid;grid-template-columns:1fr 120px 54px 52px;gap:12px;padding:0 10px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim-2);font-weight:800}
-.val-head .r{text-align:right}
-.scroll{max-height:380px;overflow:auto;margin:0 -10px;padding:0 10px}
-.scroll::-webkit-scrollbar{width:6px}.scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
-
-/* activity table */
-.tx-table{width:100%;border-collapse:collapse}
-.tx-table th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim-2);font-weight:800;text-align:left;padding:0 10px 10px;border-bottom:1px solid var(--line)}
-.tx-table th.r{text-align:right}
-.tx-table td{padding:12px 10px;border-bottom:1px solid var(--line);font-size:12.5px;vertical-align:middle}
-.tx-table tr:last-child td{border-bottom:none}
-.tx-table td.r{text-align:right}
-.tx-table tbody tr:hover td{background:rgba(255,255,255,.025)}
-.tx-dir{display:inline-flex;align-items:center;gap:9px;font-weight:700;color:#fff}
-.tx-icon{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.tx-icon svg{width:13px;height:13px}
-.tx-icon.out{background:rgba(244,63,94,.14);color:var(--red)}.tx-icon.in{background:rgba(34,197,94,.14);color:var(--green)}
-.tx-cp{font-family:'JetBrains Mono',monospace;color:var(--dim);font-size:11.5px}
-.tx-amt{font-family:'JetBrains Mono',monospace;font-weight:800}
-.tx-amt.out{color:var(--red)}.tx-amt.in{color:var(--green)}
-.tx-h{color:var(--dim-2);font-family:'JetBrains Mono',monospace;font-size:11.5px}
-.empty{font-size:12.5px;color:var(--dim-2);text-align:center;padding:26px 0}
-
-/* forms */
-input[type=text],input[type=password]{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--line);color:var(--txt);padding:12px 14px;border-radius:10px;font-size:13.5px;font-family:'JetBrains Mono',monospace;transition:border-color .15s,box-shadow .15s}
-input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,196,81,.12)}
-label{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim-2);margin-bottom:6px;font-weight:800}
-.field{margin-bottom:14px}
-button{font-family:inherit}
-button.primary{background:linear-gradient(135deg,#ffd978,var(--gold-2));color:#1a1200;border:none;padding:13px 22px;font-size:13.5px;font-weight:800;border-radius:11px;cursor:pointer;width:100%;box-shadow:0 10px 26px -10px rgba(245,196,81,.6);transition:transform .15s,box-shadow .15s,filter .15s}
-button.primary:hover{transform:translateY(-1px);filter:brightness(1.06)}
-button.primary:active{transform:translateY(0) scale(.98)}
-button.primary:disabled{background:#2a2e36;color:#6b7280;box-shadow:none;cursor:not-allowed;transform:none;filter:none}
-button.ghost{background:var(--surface);border:1px solid var(--line);color:#fff;padding:12px 20px;font-size:13px;font-weight:700;border-radius:11px;cursor:pointer;width:100%;transition:all .15s}
-button.ghost:hover{border-color:var(--line-2);background:var(--surface-2)}
-button.link{background:none;border:none;color:var(--dim);font-size:12px;cursor:pointer;font-weight:700;padding:0}
-button.link:hover{color:#fff}
-.status-box{padding:12px 16px;border-radius:10px;font-size:12.5px;margin-top:14px;display:none;word-break:break-all;line-height:1.6;font-weight:600}
-.status-box.ok{display:block;background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.25)}
-.status-box.bad{display:block;background:rgba(244,63,94,.1);color:var(--red);border:1px solid rgba(244,63,94,.25)}
-.status-box.pending{display:block;background:rgba(245,196,81,.1);color:var(--gold);border:1px solid rgba(245,196,81,.25)}
-
-/* send */
-.amount-card{background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;transition:border-color .15s,box-shadow .15s}
-.amount-card:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,196,81,.12)}
-.amount-row{display:flex;align-items:baseline;gap:10px}
-.amount-input{flex:1;background:none;border:none;color:#fff;font-family:'Inter',sans-serif;font-size:40px;font-weight:900;letter-spacing:-.02em;padding:0;width:100%}
-.amount-input:focus{outline:none}.amount-input::placeholder{color:#2f3540}
-.amount-denom{font-size:14px;font-weight:800;color:var(--gold)}
-.amount-sub{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:11.5px;color:var(--dim-2)}
-.maxbtn{font-size:10.5px;font-weight:900;color:#1a1200;background:var(--gold);border:none;border-radius:6px;padding:4px 12px;cursor:pointer}
-.review-row{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line);gap:16px}
-.review-row:last-child{border-bottom:none}
-.review-row .k{font-size:11.5px;color:var(--dim-2);white-space:nowrap}
-.review-row .v{font-size:12.5px;color:#fff;text-align:right;font-family:'JetBrains Mono',monospace;word-break:break-all;font-weight:700}
-.review-actions{display:flex;gap:10px;margin-top:18px}.review-actions button{flex:1}
-
-/* receive */
-.qr-wrap{display:flex;flex-direction:column;align-items:center;padding:6px 0}
-.qr-box{background:#fff;padding:16px;border-radius:16px;line-height:0;box-shadow:0 0 0 6px rgba(245,196,81,.12),0 30px 60px -30px rgba(245,196,81,.5)}
-.qr-box canvas{display:block}
-.receive-addr{margin-top:18px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#fff;text-align:center;word-break:break-all;line-height:1.6}
-
-/* seed grid */
-.seed-toggle{display:flex;gap:6px;margin-bottom:12px}
-.seed-toggle button{background:var(--surface);border:1px solid var(--line);color:var(--dim);font-size:11.5px;font-weight:800;padding:5px 13px;border-radius:999px;cursor:pointer}
-.seed-toggle button.active{background:var(--gold);color:#1a1200;border-color:var(--gold)}
-.seed-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px}
-.seed-box{display:flex;align-items:center;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:8px;padding:0 4px 0 9px;transition:border-color .15s}
-.seed-box:focus-within{border-color:var(--gold)}
-.seed-box .n{font-size:10.5px;color:var(--dim-2);width:15px;flex-shrink:0;font-family:'JetBrains Mono',monospace}
-.seed-box input{border:none;background:none;padding:8px 4px;font-size:12.5px;width:100%;min-width:0;font-family:'JetBrains Mono',monospace;color:var(--txt);box-shadow:none}
-.seed-box input:focus{outline:none;box-shadow:none}
-
-/* modal */
-.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);align-items:center;justify-content:center;z-index:50;padding:20px}
-.modal-backdrop.show{display:flex}
-.modal{background:#0d1017;border:1px solid var(--line-2);border-radius:18px;padding:28px;max-width:440px;width:100%;box-shadow:0 50px 100px -30px rgba(0,0,0,.9)}
-.modal h3{margin:0 0 6px;font-size:17px;font-weight:900;color:#fff}
-.modal p.sub{color:var(--dim);font-size:12.5px;margin:0 0 16px;line-height:1.6}
-.mnemonic-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:16px}
-.mnemonic-word{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--txt);display:flex;gap:6px}
-.mnemonic-word .n{color:var(--dim-2);width:16px;text-align:right}
-.confirm-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:18px;font-size:12.5px;color:var(--dim)}
-.confirm-row input{width:auto;margin-top:2px}
-.modal-actions{display:flex;gap:10px}.modal-actions button{flex:1}
-</style>
+<link rel="stylesheet" href="app.css?v=2">
+<script type="module" src="app.js?v=2"></script>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute"><defs>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
   <linearGradient id="donutGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#f5c451"/></linearGradient>
   <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5c451" stop-opacity=".45"/><stop offset="1" stop-color="#f5c451" stop-opacity="0"/></linearGradient>
 </defs></svg>
 
 <div class="shell">
-  <aside class="sidebar">
+  <aside class="sidebar" aria-label="Primary">
     <div class="brand">
       <div class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#1a1200" stroke-width="2.6" stroke-linecap="round"><path d="M4 17l6-10 4 7 6-10"/></svg></div>
       <div><div class="brand-name">NexaRail</div><div class="brand-sub">Mainnet</div></div>
     </div>
 
+    <nav>
     <div class="navlabel">Wallet</div>
-    <button class="navitem active" data-nav="overview" onclick="switchNav('overview')">
+    <button class="navitem active" data-nav="overview">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Overview
     </button>
-    <button class="navitem locked" data-nav="receive" id="nav-receive" onclick="switchNav('receive')">
+    <button class="navitem locked" data-nav="receive">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>Receive
     </button>
-    <button class="navitem locked" data-nav="send" id="nav-send" onclick="switchNav('send')">
+    <button class="navitem locked" data-nav="send">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>Send
     </button>
-    <button class="navitem locked" data-nav="activity" id="nav-activity" onclick="switchNav('activity')">
+    <button class="navitem locked" data-nav="staking">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5M3 17l9 5 9-5"/></svg>Staking
+    </button>
+    <button class="navitem locked" data-nav="activity">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>Activity
     </button>
 
     <div class="navlabel" style="margin-top:14px">Network</div>
-    <button class="navitem" data-nav="network" onclick="switchNav('network')">
+    <button class="navitem" data-nav="network">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="4" cy="6" r="2"/><circle cx="20" cy="6" r="2"/><circle cx="4" cy="18" r="2"/><circle cx="20" cy="18" r="2"/><path d="M6 7l4 3M18 7l-4 3M6 17l4-3M18 17l-4-3"/></svg>Validators
     </button>
+    </nav>
 
     <div class="sidebar-spacer"></div>
     <div class="sb-wallet" id="sb-wallet">
       <div class="row"><canvas class="identicon" id="sb-identicon" width="28" height="28"></canvas><div style="min-width:0"><div class="bal" id="sb-bal">—</div><div class="addr" id="sb-addr">—</div></div></div>
-      <button onclick="disconnectWallet()">Disconnect</button>
+      <button data-act="disconnect">Disconnect</button>
     </div>
-    <div class="sb-foot"><a href="mainnet.html">Status page &rarr;</a></div>
+    <div class="sb-foot"><a href="explorer/">Block explorer &rarr;</a><a href="mainnet.html">Status page &rarr;</a></div>
   </aside>
 
   <div class="main">
-    <div class="topbar">
+    <header class="topbar">
       <div class="tb-left">
-        <div class="livewrap">
-          <div class="pulse"><i></i><i class="b"></i><i class="c"></i><b id="pulse-core"></b></div>
-          <span class="livepill" id="pulse-live">LIVE</span>
+        <div class="livewrap" role="status" aria-live="polite">
+          <div class="pulse" aria-hidden="true"><i></i><i class="b"></i><i class="c"></i><b id="pulse-core"></b></div>
+          <span class="livepill" id="pulse-live">…</span>
         </div>
         <div class="tb-stat"><span class="k">Block</span><span class="v tnum" id="tb-height">—</span></div>
         <div class="tb-stat"><span class="k">Block time</span><span class="v tnum" id="tb-blocktime">—</span></div>
-        <div class="tb-stat"><span class="k">Validators</span><span class="v tnum" id="tb-validators">—</span></div>
-        <div class="tb-stat"><span class="k">Chain</span><span class="v" style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--dim)">nexarail-mainnet-2</span></div>
+        <div class="tb-stat hide-sm"><span class="k">Validators</span><span class="v tnum" id="tb-validators">—</span></div>
+        <div class="tb-stat hide-sm"><span class="k">Chain</span><span class="v" style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--dim)">nexarail-mainnet-2</span></div>
       </div>
       <div class="tb-right">
         <div class="acct" id="acct">
@@ -358,51 +82,51 @@ button.link:hover{color:#fff}
           <div><div class="bal" id="tb-bal">—</div><div class="addr" id="tb-addr">—</div></div>
         </div>
       </div>
-    </div>
+    </header>
 
-    <div class="content">
+    <main class="content">
+      <div class="banner" id="net-banner" role="alert"></div>
 
-      <!-- ============ OVERVIEW (dashboard) ============ -->
-      <div id="view-overview">
+      <!-- ============ OVERVIEW ============ -->
+      <section id="view-overview">
         <div class="g3">
-          <!-- HERO SLOT: onboarding when disconnected, balance when connected -->
           <div class="card gold-glow rise" style="animation-delay:.02s">
             <div id="hero-onboard">
               <div class="eyebrow">Your wallet</div>
-              <div style="font-size:20px;font-weight:900;color:#fff;letter-spacing:-.01em;margin-bottom:4px">Connect to NexaRail</div>
+              <h1 style="font-size:20px;font-weight:900;color:#fff;letter-spacing:-.01em;margin:0 0 4px">Connect to NexaRail</h1>
               <div class="hint" style="margin-bottom:16px">Create a wallet in seconds, or connect one you already have.</div>
-              <div class="tabs">
-                <button class="tab" data-tab="connect" onclick="switchTab('connect')">Connect</button>
-                <button class="tab active" data-tab="create" onclick="switchTab('create')">Create</button>
-                <button class="tab" data-tab="import" onclick="switchTab('import')">Import</button>
+              <div class="tabs" role="tablist">
+                <button class="tab" role="tab" data-tab="connect">Connect</button>
+                <button class="tab active" role="tab" data-tab="create">Create</button>
+                <button class="tab" role="tab" data-tab="import">Import</button>
               </div>
               <div id="panel-connect" style="display:none">
                 <div class="walletgrid">
-                  <button class="walletbtn" onclick="connectExtension('keplr')"><span class="badge keplr">K</span><span class="label">Keplr</span></button>
-                  <button class="walletbtn" onclick="connectExtension('leap')"><span class="badge leap">L</span><span class="label">Leap</span></button>
-                  <button class="walletbtn" onclick="connectExtension('cosmostation')"><span class="badge cosmostation">C</span><span class="label">Cosmostation</span></button>
+                  <button class="walletbtn" data-act="connect" data-arg="keplr"><span class="badge keplr">K</span><span class="label">Keplr</span></button>
+                  <button class="walletbtn" data-act="connect" data-arg="leap"><span class="badge leap">L</span><span class="label">Leap</span></button>
+                  <button class="walletbtn" data-act="connect" data-arg="cosmostation"><span class="badge cosmostation">C</span><span class="label">Cosmostation</span></button>
                 </div>
-                <div class="hint" style="margin-top:12px">No extension? <b style="color:var(--txt)">Create</b> works instantly.</div>
+                <div class="hint" style="margin-top:12px">Extension wallets are the safest option — your keys stay in the extension.</div>
               </div>
               <div id="panel-create">
-                <div class="hint" style="margin-bottom:14px">A new wallet is generated in your browser. Nothing leaves this page — you'll get a recovery phrase to keep safe.</div>
-                <button class="primary" onclick="createWallet()">Create wallet</button>
+                <div class="hint" style="margin-bottom:14px">A new wallet is generated in your browser. Nothing leaves this page — you'll get a 24-word recovery phrase to keep safe.</div>
+                <button class="primary" data-act="create">Create wallet</button>
               </div>
               <div id="panel-import" style="display:none">
                 <div class="seed-toggle">
-                  <button class="active" data-len="12" onclick="setSeedLength(12)">12 words</button>
-                  <button data-len="24" onclick="setSeedLength(24)">24 words</button>
+                  <button class="active" data-act="seedlen" data-arg="12">12 words</button>
+                  <button data-act="seedlen" data-arg="24">24 words</button>
                 </div>
                 <div class="seed-grid" id="seed-grid"></div>
                 <div class="hint" style="text-align:center;margin-bottom:12px">Paste the whole phrase into any box — it fills the rest.</div>
-                <button class="primary" onclick="importWallet()">Import wallet</button>
-                <div id="import-error" class="status-box"></div>
+                <button class="primary" data-act="import">Import wallet</button>
+                <div id="import-error" class="status-box" role="alert"></div>
               </div>
-              <div id="connect-error" class="status-box"></div>
+              <div id="connect-error" class="status-box" role="alert"></div>
               <div id="saved-wallet-row" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-                  <span class="hint">Encrypted wallet saved on this device.</span>
-                  <button class="ghost" style="width:auto;padding:8px 14px" onclick="openUnlockModal()">Unlock</button>
+                  <span class="hint">Saved wallet <span class="mono" id="saved-wallet-addr"></span></span>
+                  <button class="ghost" style="width:auto;padding:8px 14px" data-act="open-unlock">Unlock</button>
                 </div>
               </div>
             </div>
@@ -418,53 +142,50 @@ button.link:hover{color:#fff}
               <div>
                 <div class="eyebrow">Available balance</div>
                 <div class="hero-amount tnum" id="my-balance">0<span class="denom">NXRL</span></div>
-                <div class="hero-sub" style="margin-top:8px"><button class="link" onclick="copyAddress()">Copy address</button> &nbsp;·&nbsp; <button class="link" onclick="offerSaveToDevice()" id="save-device-link" style="display:none">Save to this device</button></div>
+                <div class="hero-sub" style="margin-top:8px"><span id="hero-staked"></span><button class="link" data-act="copy-address">Copy address</button> &nbsp;·&nbsp; <button class="link" data-act="open-save" id="save-device-link" style="display:none">Save to this device</button></div>
               </div>
               <div class="hero-actions">
-                <button class="ghost" onclick="switchNav('receive')">Receive</button>
-                <button class="primary" onclick="switchNav('send')">Send</button>
+                <button class="ghost" data-nav="receive">Receive</button>
+                <button class="ghost" data-nav="staking">Stake</button>
+                <button class="primary" data-nav="send">Send</button>
               </div>
             </div>
           </div>
 
-          <!-- NETWORK -->
           <div class="card rise" style="animation-delay:.08s">
-            <div class="card-head"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>Network</h2><span class="meta">live</span></div>
+            <div class="card-head"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>Network</h2><span class="meta" id="net-meta">live</span></div>
             <div class="net-grid">
               <div class="donut">
-                <svg viewBox="0 0 120 120"><circle class="track" cx="60" cy="60" r="50" stroke-width="11"/><circle class="arc" id="donut-arc" cx="60" cy="60" r="50" stroke-width="11" stroke-dasharray="314.16" stroke-dashoffset="314.16"/></svg>
+                <svg viewBox="0 0 120 120" role="img" aria-label="Share of supply bonded"><circle class="track" cx="60" cy="60" r="50" stroke-width="11"/><circle class="arc" id="donut-arc" cx="60" cy="60" r="50" stroke-width="11" stroke-dasharray="314.16" stroke-dashoffset="314.16"/></svg>
                 <div class="donut-c"><div class="p" id="donut-pct">—</div><div class="l">Bonded</div></div>
               </div>
               <div class="kv">
+                <div><span>Staking APR</span><b id="kv-apr" style="color:var(--teal)">—</b></div>
                 <div><span>Total supply</span><b id="kv-supply">—</b></div>
                 <div><span>Bonded</span><b id="kv-bonded">—</b></div>
                 <div><span>Community pool</span><b id="kv-pool">—</b></div>
-                <div><span>Max validators</span><b id="kv-maxval">—</b></div>
                 <div><span>Unbonding</span><b id="kv-unbond">—</b></div>
               </div>
             </div>
           </div>
 
-          <!-- CADENCE -->
           <div class="card rise" style="animation-delay:.14s">
             <div class="card-head"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l5-6 4 3 5-8 4 5"/></svg>Block cadence</h2><span class="meta">last 30 blocks</span></div>
             <div class="big-stat" id="cad-avg">—<small>s avg</small></div>
-            <svg class="chart" id="cad-chart" viewBox="0 0 300 92" preserveAspectRatio="none"></svg>
+            <svg class="chart" id="cad-chart" viewBox="0 0 300 92" preserveAspectRatio="none" role="img" aria-label="Block interval over the last 30 blocks"></svg>
             <div class="chart-foot"><span>Fastest <b id="cad-min">—</b></span><span>Slowest <b id="cad-max">—</b></span><span>Blocks/min <b id="cad-bpm">—</b></span></div>
           </div>
         </div>
 
         <div class="g2">
-          <!-- LIVE BLOCKS -->
           <div class="card rise" style="animation-delay:.2s">
-            <div class="card-head"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M9 21V9"/></svg>Live blocks</h2><span class="meta" id="blk-meta">streaming</span></div>
+            <div class="card-head"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M9 21V9"/></svg>Live blocks</h2><span class="meta" id="blk-meta">connecting</span></div>
             <div class="blk-head"><span>Height</span><span>Proposer</span><span class="r">Txs</span><span class="r">Age</span></div>
             <div class="blocks" id="blocks"><div class="empty skeleton">waiting for next block</div></div>
           </div>
 
-          <!-- VALIDATORS -->
           <div class="card rise" style="animation-delay:.26s">
-            <div class="card-head"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8.5-8 9-4.5-.5-8-4-8-9V7l8-4z"/></svg>Validators</h2><span class="meta" id="val-meta">—</span></div>
+            <div class="card-head"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8.5-8 9-4.5-.5-8-4-8-9V7l8-4z"/></svg>Validators</h2><button class="link" data-nav="network" id="val-meta">—</button></div>
             <div class="val-head"><span>Validator</span><span>Voting power</span><span class="r">Share</span><span class="r">Fee</span></div>
             <div class="scroll"><div class="vals" id="vals"><div class="empty skeleton">loading validators</div></div></div>
           </div>
@@ -472,59 +193,59 @@ button.link:hover{color:#fff}
 
         <div class="g1" id="overview-activity-wrap" style="display:none">
           <div class="card rise">
-            <div class="card-head"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>Recent activity</h2><button class="link" onclick="switchNav('activity')">View all &rarr;</button></div>
+            <div class="card-head"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>Recent activity</h2><button class="link" data-nav="activity">View all &rarr;</button></div>
             <div id="activity-list-preview"><div class="empty skeleton">loading</div></div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- ============ RECEIVE ============ -->
-      <div id="view-receive" style="display:none">
+      <section id="view-receive" style="display:none">
         <div class="g2">
           <div class="card rise">
             <div class="card-head"><h2>Receive NXRL</h2></div>
             <div class="qr-wrap">
-              <div class="qr-box"><canvas id="receive-qr"></canvas></div>
+              <div class="qr-box"><canvas id="receive-qr" aria-label="QR code of your address"></canvas></div>
               <div class="receive-addr" id="receive-address">—</div>
               <div class="hint" style="text-align:center;margin-top:8px;max-width:320px">Share this address to receive NXRL from any Cosmos-SDK wallet.</div>
-              <button class="ghost" style="width:auto;margin-top:16px" onclick="copyAddress()">Copy address</button>
+              <button class="ghost" style="width:auto;margin-top:16px" data-act="copy-address">Copy address</button>
             </div>
           </div>
           <div class="card rise" style="animation-delay:.08s">
             <div class="card-head"><h2>How it works</h2></div>
             <div class="kv" style="gap:14px">
-              <div style="display:block"><b style="font-family:Inter;font-size:13px">Instant settlement</b><div class="hint">Transfers finalise in a single block — about 1.4 seconds.</div></div>
-              <div style="display:block"><b style="font-family:Inter;font-size:13px">Flat network fee</b><div class="hint">A standard send costs roughly 0.0001 NXRL in gas.</div></div>
-              <div style="display:block"><b style="font-family:Inter;font-size:13px">Your keys, your coins</b><div class="hint">This page never transmits your private key. Signing happens locally.</div></div>
+              <div style="display:block"><b style="font-family:Inter;font-size:13px">Single-block finality</b><div class="hint">Transfers are final as soon as they're included — about <span class="js-blocktime">2</span> seconds.</div></div>
+              <div style="display:block"><b style="font-family:Inter;font-size:13px">Tiny network fee</b><div class="hint">A standard send costs well under 0.001 NXRL in gas. The exact fee is shown before you confirm.</div></div>
+              <div style="display:block"><b style="font-family:Inter;font-size:13px">Your keys, your coins</b><div class="hint">This page never transmits your recovery phrase or private key. Signing happens locally.</div></div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- ============ SEND ============ -->
-      <div id="view-send" style="display:none">
+      <section id="view-send" style="display:none">
         <div class="g2">
           <div class="card rise">
             <div class="card-head"><h2>Send NXRL</h2><span class="meta">Balance <b id="send-balance-hint" style="color:#fff">0</b> NXRL</span></div>
-            <div id="send-form-step">
-              <div class="field"><label>Recipient address</label><input type="text" id="send-to" placeholder="nxr1..."></div>
+            <form id="send-form-step" novalidate>
+              <div class="field"><label for="send-to">Recipient address</label><input type="text" id="send-to" placeholder="nxr1..." autocomplete="off" spellcheck="false" autocapitalize="off"><div class="hint" id="send-to-hint" style="margin-top:6px"></div></div>
               <div class="amount-card">
-                <label>Amount</label>
-                <div class="amount-row"><input type="text" class="amount-input tnum" id="send-amount" placeholder="0.00" inputmode="decimal"><span class="amount-denom">NXRL</span></div>
-                <div class="amount-sub"><span>Leaves a small gas buffer</span><button class="maxbtn" onclick="setMax()">MAX</button></div>
+                <label for="send-amount">Amount</label>
+                <div class="amount-row"><input type="text" class="amount-input tnum" id="send-amount" placeholder="0.00" inputmode="decimal" autocomplete="off"><span class="amount-denom">NXRL</span></div>
+                <div class="amount-sub"><span>MAX leaves enough for the network fee</span><button type="button" class="maxbtn" data-act="send-max">MAX</button></div>
               </div>
-              <div class="field"><label>Memo (optional)</label><input type="text" id="send-memo" placeholder=""></div>
-              <button class="primary" id="review-btn" onclick="reviewSend()">Review transfer</button>
-              <div id="send-status" class="status-box"></div>
-            </div>
+              <div class="field"><label for="send-memo">Memo (optional)</label><input type="text" id="send-memo" maxlength="256" placeholder="Required by some exchanges" autocomplete="off"></div>
+              <button class="primary" id="review-btn" type="submit">Review transfer</button>
+              <div id="send-status" class="status-box" role="alert"></div>
+            </form>
             <div id="send-review-step" style="display:none">
               <div class="review-row"><span class="k">From</span><span class="v" id="rv-from">—</span></div>
               <div class="review-row"><span class="k">To</span><span class="v" id="rv-to">—</span></div>
               <div class="review-row"><span class="k">Amount</span><span class="v" id="rv-amount">—</span></div>
               <div class="review-row"><span class="k">Network fee</span><span class="v" id="rv-fee">—</span></div>
               <div class="review-row" id="rv-memo-row" style="display:none"><span class="k">Memo</span><span class="v" id="rv-memo">—</span></div>
-              <div class="review-actions"><button class="ghost" onclick="cancelReview()">Back</button><button class="primary" id="confirm-send-btn" onclick="confirmSend()">Confirm &amp; send</button></div>
-              <div id="confirm-status" class="status-box"></div>
+              <div class="review-actions"><button class="ghost" data-act="send-back">Back</button><button class="primary" id="confirm-send-btn" data-act="send-confirm">Confirm &amp; send</button></div>
+              <div id="confirm-status" class="status-box" role="alert"></div>
             </div>
           </div>
           <div class="card rise" style="animation-delay:.08s">
@@ -532,379 +253,116 @@ button.link:hover{color:#fff}
             <div id="activity-list-send"><div class="empty">—</div></div>
           </div>
         </div>
-      </div>
+      </section>
+
+      <!-- ============ STAKING ============ -->
+      <section id="view-staking" style="display:none">
+        <div class="stat-row">
+          <div class="card stat rise"><div class="k">Staked</div><div class="v tnum" id="st-staked">—<small>NXRL</small></div><div class="s" id="st-count">—</div></div>
+          <div class="card stat rise" style="animation-delay:.05s"><div class="k">Pending rewards</div><div class="v tnum" id="st-rewards">—<small>NXRL</small></div><div class="s"><button class="link" data-act="claim-all" id="claim-all-btn" style="color:var(--gold)">Claim all &rarr;</button></div></div>
+          <div class="card stat rise" style="animation-delay:.1s"><div class="k">Network APR</div><div class="v tnum" id="st-apr" style="color:var(--teal)">—</div><div class="s">Before validator fee. Estimate, not a promise.</div></div>
+        </div>
+        <div class="card rise g1">
+          <div class="card-head"><h2>Your delegations</h2><button class="ghost btn-sm" data-nav="network">Stake with a validator</button></div>
+          <div id="delegations"><div class="empty skeleton">loading</div></div>
+        </div>
+        <div class="card rise g1" id="unbonding-wrap" style="display:none">
+          <div class="card-head"><h2>Unbonding</h2><span class="meta" id="unbond-meta"></span></div>
+          <div id="unbondings"></div>
+        </div>
+      </section>
 
       <!-- ============ ACTIVITY ============ -->
-      <div id="view-activity" style="display:none">
+      <section id="view-activity" style="display:none">
         <div class="card rise">
-          <div class="card-head"><h2>All activity</h2></div>
+          <div class="card-head"><h2>All activity</h2><a class="link xl" id="acct-explorer" href="explorer/" target="_blank" rel="noopener">Open in explorer &rarr;</a></div>
           <div id="activity-list-full"><div class="empty skeleton">loading</div></div>
         </div>
-      </div>
+      </section>
 
-      <!-- ============ NETWORK / VALIDATORS ============ -->
-      <div id="view-network" style="display:none">
+      <!-- ============ VALIDATORS ============ -->
+      <section id="view-network" style="display:none">
         <div class="card rise">
-          <div class="card-head"><h2>Validator set</h2><span class="meta" id="val-meta-2">—</span></div>
+          <div class="card-head"><h2>Validator set</h2><input type="text" class="searchbox" id="val-search" placeholder="Search validators" aria-label="Search validators" autocomplete="off"></div>
+          <div class="hint" style="margin:-6px 0 12px" id="val-meta-2">—</div>
           <div class="val-head"><span>Validator</span><span>Voting power</span><span class="r">Share</span><span class="r">Fee</span></div>
           <div class="vals" id="vals-full"><div class="empty skeleton">loading validators</div></div>
         </div>
-      </div>
-
-    </div>
+      </section>
+    </main>
   </div>
 </div>
 
+<nav class="bottomnav" aria-label="Mobile">
+  <button data-nav="overview" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Home</button>
+  <button data-nav="send" class="locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>Send</button>
+  <button data-nav="receive" class="locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>Receive</button>
+  <button data-nav="staking" class="locked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5M3 17l9 5 9-5"/></svg>Stake</button>
+  <button data-nav="network"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8.5-8 9-4.5-.5-8-4-8-9V7l8-4z"/></svg>Validators</button>
+</nav>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
 <!-- modals -->
-<div class="modal-backdrop" id="mnemonic-modal"><div class="modal">
-  <h3>Your recovery phrase</h3>
-  <p class="sub">Write this down and store it somewhere safe. Anyone with these words can access your funds. NexaRail cannot recover it for you.</p>
-  <div class="mnemonic-grid" id="mnemonic-grid"></div>
-  <div class="confirm-row"><input type="checkbox" id="mnemonic-confirm"><label for="mnemonic-confirm" style="margin:0;text-transform:none;letter-spacing:0;font-size:12.5px;color:var(--dim);font-weight:500">I've saved my recovery phrase somewhere safe</label></div>
-  <div class="modal-actions"><button class="primary" id="mnemonic-continue" disabled onclick="confirmMnemonicSaved()">Continue</button></div>
+<div class="modal-backdrop" id="mnemonic-modal" data-sticky><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mm-title">
+  <div id="mm-step-show">
+    <h3 id="mm-title">Your recovery phrase</h3>
+    <p class="sub">Write these 24 words down, in order, on paper. Anyone with them controls your funds. NexaRail cannot recover them for you.</p>
+    <div class="mnemonic-grid" id="mnemonic-grid"></div>
+    <div class="confirm-row"><input type="checkbox" id="mnemonic-confirm"><label for="mnemonic-confirm" style="margin:0;text-transform:none;letter-spacing:0;font-size:12.5px;color:var(--dim);font-weight:500">I've written my recovery phrase down</label></div>
+    <div class="modal-actions"><button class="ghost" data-act="mnemonic-cancel">Cancel</button><button class="primary" id="mnemonic-continue" disabled data-act="mnemonic-next">Continue</button></div>
+  </div>
+  <form id="mm-step-verify" style="display:none" novalidate>
+    <h3>Confirm your phrase</h3>
+    <p class="sub">Enter the requested words to prove you saved it.</p>
+    <div class="verify-grid" id="verify-grid"></div>
+    <div class="modal-actions"><button type="button" class="ghost" data-act="mnemonic-back">Show again</button><button class="primary" type="submit">Confirm</button></div>
+    <div id="verify-error" class="status-box" role="alert"></div>
+  </form>
 </div></div>
-<div class="modal-backdrop" id="save-device-modal"><div class="modal">
-  <h3>Save to this device</h3>
-  <p class="sub">Your recovery phrase will be encrypted with this passphrase and stored in this browser only.</p>
-  <div class="field"><label>Choose a passphrase</label><input type="password" id="save-passphrase"></div>
-  <div class="modal-actions"><button class="ghost" onclick="closeModal('save-device-modal')">Cancel</button><button class="primary" onclick="confirmSaveToDevice()">Save</button></div>
-  <div id="save-device-error" class="status-box"></div>
-</div></div>
-<div class="modal-backdrop" id="unlock-modal"><div class="modal">
-  <h3>Unlock saved wallet</h3>
+
+<div class="modal-backdrop" id="save-device-modal"><form class="modal" role="dialog" aria-modal="true" aria-labelledby="sd-title" id="save-device-form" novalidate>
+  <h3 id="sd-title">Save to this device</h3>
+  <p class="sub">Your recovery phrase is encrypted with this passphrase (AES-256-GCM, 600k-round PBKDF2) and stored in this browser only. It auto-locks after 15 minutes idle.</p>
+  <div class="field"><label for="save-passphrase">Passphrase (10+ characters)</label><input type="password" id="save-passphrase" autocomplete="new-password"><div class="pw-meter"><i id="pw-meter"></i></div></div>
+  <div class="field"><label for="save-passphrase2">Repeat passphrase</label><input type="password" id="save-passphrase2" autocomplete="new-password"></div>
+  <div class="modal-actions"><button type="button" class="ghost" data-act="close-modal" data-arg="save-device-modal">Cancel</button><button class="primary" type="submit">Save</button></div>
+  <div id="save-device-error" class="status-box" role="alert"></div>
+</form></div>
+
+<div class="modal-backdrop" id="unlock-modal"><form class="modal" role="dialog" aria-modal="true" aria-labelledby="ul-title" id="unlock-form" novalidate>
+  <h3 id="ul-title">Unlock saved wallet</h3>
   <p class="sub">Enter the passphrase you used to save this wallet on this device.</p>
-  <div class="field"><label>Passphrase</label><input type="password" id="unlock-passphrase"></div>
-  <div class="modal-actions"><button class="ghost" onclick="closeModal('unlock-modal')">Cancel</button><button class="primary" onclick="confirmUnlock()">Unlock</button></div>
-  <div id="unlock-error" class="status-box"></div>
-  <div style="margin-top:14px;text-align:center"><button class="link" onclick="forgetDevice()">Forget this saved wallet</button></div>
+  <div class="field"><label for="unlock-passphrase">Passphrase</label><input type="password" id="unlock-passphrase" autocomplete="current-password"></div>
+  <div class="modal-actions"><button type="button" class="ghost" data-act="close-modal" data-arg="unlock-modal">Cancel</button><button class="primary" type="submit" id="unlock-btn">Unlock</button></div>
+  <div id="unlock-error" class="status-box" role="alert"></div>
+  <div style="margin-top:14px;text-align:center"><button type="button" class="link" data-act="forget-device">Forget this saved wallet</button></div>
+</form></div>
+
+<div class="modal-backdrop" id="stake-modal"><form class="modal" role="dialog" aria-modal="true" aria-labelledby="sk-title" id="stake-form" novalidate>
+  <h3 id="sk-title">Stake</h3>
+  <p class="sub" id="sk-sub"></p>
+  <div class="kvline"><span>Validator</span><b id="sk-val">—</b></div>
+  <div class="kvline"><span>Commission</span><b id="sk-com">—</b></div>
+  <div class="kvline"><span id="sk-avail-k">Available</span><b id="sk-avail">—</b></div>
+  <div class="amount-card" style="margin-top:14px">
+    <label for="sk-amount">Amount</label>
+    <div class="amount-row"><input type="text" class="amount-input tnum" id="sk-amount" placeholder="0.00" inputmode="decimal" autocomplete="off" style="font-size:30px"><span class="amount-denom">NXRL</span></div>
+    <div class="amount-sub"><span id="sk-fee">Fee shown before signing</span><button type="button" class="maxbtn" data-act="stake-max">MAX</button></div>
+  </div>
+  <div class="hint" id="sk-warn" style="margin-bottom:14px"></div>
+  <div class="modal-actions"><button type="button" class="ghost" data-act="close-modal" data-arg="stake-modal">Cancel</button><button class="primary" type="submit" id="sk-btn">Review</button></div>
+  <div id="sk-status" class="status-box" role="alert"></div>
+</form></div>
+
+<div class="modal-backdrop" id="claim-modal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="cl-title">
+  <h3 id="cl-title">Claim rewards</h3>
+  <p class="sub">Withdraw pending staking rewards from every validator you delegate to.</p>
+  <div class="kvline"><span>Rewards</span><b id="cl-amt">—</b></div>
+  <div class="kvline"><span>Validators</span><b id="cl-n">—</b></div>
+  <div class="kvline"><span>Network fee</span><b id="cl-fee">estimating…</b></div>
+  <div class="modal-actions" style="margin-top:18px"><button class="ghost" data-act="close-modal" data-arg="claim-modal">Cancel</button><button class="primary" id="cl-btn" data-act="claim-confirm" disabled>Claim</button></div>
+  <div id="cl-status" class="status-box" role="alert"></div>
 </div></div>
-
-<script type="module">
-import { SigningStargateClient, GasPrice, calculateFee } from "https://esm.sh/@cosmjs/stargate@0.32.4?bundle";
-import { DirectSecp256k1HdWallet } from "https://esm.sh/@cosmjs/proto-signing@0.32.4?bundle";
-import QRCode from "https://esm.sh/qrcode@1.5.3?bundle";
-
-const CHAIN_ID = "nexarail-mainnet-2";
-// Trailing slash matters: nginx 301-redirects bare "/rpc" -> "/rpc/", and browsers
-// refuse to follow redirects on CORS preflights, which silently kills every CosmJS call.
-const RPC = "https://5-161-72-48.nip.io/rpc/";
-const REST = "https://5-161-72-48.nip.io";
-const DENOM = "unxrl", DECIMALS = 6, PREFIX = "nxr", VAULT_KEY = "nexarail_vault_v1";
-
-const chainInfo = {
-  chainId: CHAIN_ID, chainName: "NexaRail", rpc: RPC, rest: REST, bip44: { coinType: 118 },
-  bech32Config: { bech32PrefixAccAddr:"nxr", bech32PrefixAccPub:"nxrpub", bech32PrefixValAddr:"nxrvaloper", bech32PrefixValPub:"nxrvaloperpub", bech32PrefixConsAddr:"nxrvalcons", bech32PrefixConsPub:"nxrvalconspub" },
-  currencies: [{ coinDenom:"NXRL", coinMinimalDenom:DENOM, coinDecimals:DECIMALS }],
-  feeCurrencies: [{ coinDenom:"NXRL", coinMinimalDenom:DENOM, coinDecimals:DECIMALS, gasPriceStep:{ low:0.001, average:0.001, high:0.01 } }],
-  stakeCurrency: { coinDenom:"NXRL", coinMinimalDenom:DENOM, coinDecimals:DECIMALS },
-};
-const WALLETS = {
-  keplr: { name:"Keplr", get:() => window.keplr },
-  leap: { name:"Leap", get:() => window.leap },
-  cosmostation: { name:"Cosmostation", get:() => window.cosmostation?.providers?.keplr },
-};
-
-let signingClient = null, myAddress = null, localSigner = null, pendingSend = null;
-const $ = id => document.getElementById(id);
-const fmtNxrl = u => new Intl.NumberFormat('en-US',{maximumFractionDigits:6}).format(Number(u)/1e6);
-const fmtNxrlShort = u => { const n = Number(u)/1e6; return n >= 1e6 ? (n/1e6).toFixed(2)+'M' : n >= 1e3 ? (n/1e3).toFixed(1)+'K' : n.toFixed(2); };
-const fmt = n => new Intl.NumberFormat('en-US').format(n);
-const short = a => a ? a.slice(0,10) + '…' + a.slice(-6) : '—';
-function ago(ms){ const s = Math.max(0,(Date.now()-ms)/1000); return s<60 ? Math.round(s)+'s' : s<3600 ? Math.round(s/60)+'m' : Math.round(s/3600)+'h'; }
-
-function nxrlToUnxrl(input){
-  const s = String(input).trim();
-  if(!/^\d+(\.\d{1,6})?$/.test(s)) throw new Error('Enter a valid amount (up to 6 decimal places)');
-  const [whole, frac=''] = s.split('.');
-  const val = BigInt(whole)*1000000n + BigInt((frac+'000000').slice(0,6));
-  if(val <= 0n) throw new Error('Amount must be greater than zero');
-  return val;
-}
-function animateNumber(el, from, to, ms, suffix){
-  const t0 = performance.now();
-  (function f(now){ const t = Math.min(1,(now-t0)/ms), e = 1-Math.pow(1-t,3);
-    el.innerHTML = fmtNxrl(Math.round((from+(to-from)*e)*1e6)) + (suffix||''); if(t<1) requestAnimationFrame(f); })(t0);
-}
-
-// ---------- identicons & deterministic colours ----------
-function hashStr(s){ let h = 2166136261; for(const c of s){ h ^= c.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; } return h; }
-function hueFor(s){ return hashStr(s) % 360; }
-function drawIdenticon(canvas, seed){
-  const ctx = canvas.getContext('2d'); const W = canvas.width; const N = 5; const cell = W/N;
-  let h = hashStr(seed); const rnd = () => { h ^= h<<13; h>>>=0; h ^= h>>>17; h ^= h<<5; h>>>=0; return h/4294967296; };
-  const hue = Math.floor(rnd()*360); const c1 = `hsl(${hue} 85% 60%)`, c2 = `hsl(${(hue+150)%360} 80% 55%)`, bg = `hsl(${hue} 40% 14%)`;
-  ctx.fillStyle = bg; ctx.fillRect(0,0,W,W);
-  for(let y=0;y<N;y++){ const row=[]; for(let x=0;x<3;x++) row.push(rnd());
-    for(let x=0;x<N;x++){ const v = row[x<3?x:N-1-x]; if(v>.7){ ctx.fillStyle=c1; ctx.fillRect(x*cell,y*cell,cell+.5,cell+.5);} else if(v>.4){ ctx.fillStyle=c2; ctx.fillRect(x*cell,y*cell,cell+.5,cell+.5);} } }
-}
-
-// ---------- live pulse / topbar / cadence ----------
-let lastHeight = null, lastBeat = null; const intervals = []; const MAXI = 30;
-const blocksSeen = []; // {height, proposer, txs, timeMs}
-let consMap = {};      // proposer hex -> moniker
-
-function setLive(state){ const el = $('pulse-live');
-  if(state==='live'){ el.textContent='LIVE'; el.style.background='var(--gold)'; el.style.color='#1a1200'; }
-  else if(state==='syncing'){ el.textContent='SYNC'; el.style.background='#f59e0b'; el.style.color='#1a1200'; }
-  else { el.textContent='OFFLINE'; el.style.background='#4b5563'; el.style.color='#fff'; } }
-
-function renderCadence(){
-  const svg = $('cad-chart'); const W=300, H=92, pad=4;
-  const data = intervals.slice(-MAXI).map(x=>x/1000);
-  if(data.length < 2){ svg.innerHTML=''; return; }
-  const min = Math.min(...data), max = Math.max(...data), span = Math.max(.2, max-min);
-  const pts = data.map((v,i)=>[ pad + i*(W-2*pad)/(Math.max(1,data.length-1)), H-pad - ((v-min)/span)*(H-2*pad) ]);
-  const line = pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
-  const area = line + ` L${pts[pts.length-1][0].toFixed(1)} ${H} L${pts[0][0].toFixed(1)} ${H} Z`;
-  svg.innerHTML = `<path d="${area}" fill="url(#areaGrad)"/><path d="${line}" fill="none" stroke="#f5c451" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` +
-    `<circle cx="${pts[pts.length-1][0].toFixed(1)}" cy="${pts[pts.length-1][1].toFixed(1)}" r="3.5" fill="#f5c451"><animate attributeName="r" values="3.5;6;3.5" dur="1.4s" repeatCount="indefinite"/></circle>`;
-  const avg = data.reduce((a,b)=>a+b,0)/data.length;
-  $('cad-avg').innerHTML = avg.toFixed(2)+'<small>s avg</small>';
-  $('cad-min').textContent = min.toFixed(2)+'s'; $('cad-max').textContent = max.toFixed(2)+'s';
-  $('cad-bpm').textContent = (60/avg).toFixed(1);
-  $('tb-blocktime').textContent = avg.toFixed(1)+'s';
-}
-
-function renderBlocks(){
-  const el = $('blocks');
-  if(!blocksSeen.length) return;
-  el.innerHTML = blocksSeen.slice(0,9).map((b,i)=>{
-    const name = consMap[b.proposer] || (b.proposer.slice(0,8)+'…');
-    const hue = hueFor(name);
-    return `<div class="blk ${i===0?'new':''}"><span class="h">#${fmt(b.height)}</span><span class="p"><i class="vdot" style="color:hsl(${hue} 80% 60%);background:hsl(${hue} 80% 60%)"></i><span>${name}</span></span><span class="t">${b.txs}</span><span class="a" data-t="${b.timeMs}">${ago(b.timeMs)}</span></div>`;
-  }).join('');
-}
-setInterval(()=>{ document.querySelectorAll('.blk .a').forEach(a=>{ a.textContent = ago(Number(a.dataset.t)); }); }, 1000);
-
-async function fetchLatestBlock(){
-  const r = await fetch(RPC + 'block?t=' + Date.now(), {cache:'no-store'}); const d = await r.json();
-  const b = d.result.block; return { height: b.header.height, proposer: b.header.proposer_address, txs: b.data.txs.length, timeMs: new Date(b.header.time).getTime() };
-}
-
-async function tick(){
-  try{
-    const r = await fetch(RPC + 'status?t=' + Date.now(), {cache:'no-store'}); if(!r.ok) throw 0;
-    const sync = (await r.json()).result.sync_info; const h = sync.latest_block_height; const now = Date.now();
-    setLive(sync.catching_up ? 'syncing' : 'live');
-    if(h !== lastHeight){
-      if(lastHeight !== null && lastBeat !== null){ intervals.push(now-lastBeat); if(intervals.length>MAXI) intervals.shift(); }
-      lastHeight = h; lastBeat = now;
-      const he = $('tb-height'); he.textContent = fmt(h); he.classList.add('flash'); setTimeout(()=>he.classList.remove('flash'),450);
-      const c = $('pulse-core'); c.classList.remove('beat'); void c.offsetWidth; c.classList.add('beat');
-      renderCadence();
-      try{ const blk = await fetchLatestBlock(); if(!blocksSeen.length || blocksSeen[0].height !== blk.height){ blocksSeen.unshift(blk); if(blocksSeen.length>12) blocksSeen.pop(); renderBlocks(); } }catch(e){}
-    }
-  }catch(e){ setLive('offline'); }
-}
-tick(); setInterval(tick, 1300);
-
-// ---------- network + validators ----------
-async function consAddrFromPubkey(b64){
-  const bytes = Uint8Array.from(atob(b64), c=>c.charCodeAt(0));
-  const hash = new Uint8Array(await crypto.subtle.digest('SHA-256', bytes));
-  return Array.from(hash.slice(0,20)).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
-}
-function valRow(v, total){
-  const pct = total ? (Number(v.tokens)/total*100) : 0; const hue = hueFor(v.description.moniker);
-  return `<div class="val"><span class="n"><i class="vdot" style="color:hsl(${hue} 80% 60%);background:hsl(${hue} 80% 60%)"></i><span>${v.description.moniker}</span></span><span class="bar"><i data-w="${pct.toFixed(2)}"></i></span><span class="pct">${pct < 0.1 ? '&lt;0.1' : pct.toFixed(1)}%</span><span class="com">${(Number(v.commission.commission_rates.rate)*100).toFixed(0)}%</span></div>`;
-}
-async function refreshValidators(){
-  try{
-    const r = await fetch(`${REST}/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=200`); const d = await r.json();
-    const vs = (d.validators||[]).sort((a,b)=>Number(b.tokens)-Number(a.tokens)); const total = vs.reduce((a,v)=>a+Number(v.tokens),0);
-    $('tb-validators').textContent = vs.length; $('val-meta').textContent = vs.length + ' active'; $('val-meta-2').textContent = vs.length + ' active · sorted by voting power';
-    const html = vs.map(v=>valRow(v,total)).join('');
-    $('vals').innerHTML = html; $('vals-full').innerHTML = html;
-    requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('.bar i').forEach(i=>{ i.style.width = i.dataset.w+'%'; })));
-    const m = {}; await Promise.all(vs.map(async v=>{ try{ m[await consAddrFromPubkey(v.consensus_pubkey.key)] = v.description.moniker; }catch(e){} })); consMap = m; renderBlocks();
-  }catch(e){ $('vals').innerHTML = '<div class="empty">Validators unavailable</div>'; }
-}
-async function refreshNetwork(){
-  try{
-    const [pool, supply, cp, params] = await Promise.all([
-      fetch(`${REST}/cosmos/staking/v1beta1/pool`).then(r=>r.json()),
-      fetch(`${REST}/cosmos/bank/v1beta1/supply/by_denom?denom=unxrl`).then(r=>r.json()),
-      fetch(`${REST}/cosmos/distribution/v1beta1/community_pool`).then(r=>r.json()),
-      fetch(`${REST}/cosmos/staking/v1beta1/params`).then(r=>r.json()),
-    ]);
-    const bonded = Number(pool.pool.bonded_tokens), total = Number(supply.amount.amount);
-    const pct = total ? bonded/total*100 : 0;
-    $('kv-supply').textContent = fmtNxrlShort(total)+' NXRL'; $('kv-bonded').textContent = fmtNxrlShort(bonded)+' NXRL';
-    const cpAmt = (cp.pool||[]).find(x=>x.denom==='unxrl'); $('kv-pool').textContent = cpAmt ? fmtNxrlShort(Number(cpAmt.amount))+' NXRL' : '—';
-    $('kv-maxval').textContent = params.params.max_validators; $('kv-unbond').textContent = Math.round(parseInt(params.params.unbonding_time)/86400)+' days';
-    $('donut-pct').textContent = pct.toFixed(1)+'%';
-    const C = 2*Math.PI*50; $('donut-arc').style.strokeDashoffset = (C*(1-Math.max(.02,pct/100))).toFixed(2);
-  }catch(e){}
-}
-refreshValidators(); setInterval(refreshValidators, 60000);
-refreshNetwork(); setInterval(refreshNetwork, 30000);
-
-// ---------- nav ----------
-window.switchTab = tab => { document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
-  ['connect','create','import'].forEach(p=>$('panel-'+p).style.display = p===tab?'block':'none'); };
-const showModal = id => $(id).classList.add('show'); window.closeModal = id => $(id).classList.remove('show');
-window.switchNav = nav => {
-  if(['receive','send','activity'].includes(nav) && !myAddress){ switchTab('create'); return; }
-  document.querySelectorAll('.navitem[data-nav]').forEach(t=>t.classList.toggle('active', t.dataset.nav===nav));
-  ['overview','receive','send','activity','network'].forEach(n=>{ const el=$('view-'+n); el.style.display = n===nav?'block':'none'; });
-  const v = $('view-'+nav); v.querySelectorAll('.rise').forEach(c=>{ c.style.animation='none'; void c.offsetWidth; c.style.animation=''; });
-  if(nav==='send') cancelReview();
-  window.scrollTo({top:0,behavior:'smooth'});
-};
-
-// ---------- connect / create / import ----------
-window.connectExtension = async key => {
-  const err = $('connect-error'); err.style.display='none'; const w = WALLETS[key]; const p = w.get();
-  if(!p){ err.textContent = w.name+' extension not detected. Install it, then reload this page.'; err.style.display='block'; return; }
-  try{ await p.experimentalSuggestChain(chainInfo); await p.enable(CHAIN_ID); const s = p.getOfflineSigner(CHAIN_ID); const a = await s.getAccounts(); await activateSigner(s, a[0].address, w.name, false); }
-  catch(e){ err.textContent='Connection failed: '+(e.message||e); err.style.display='block'; }
-};
-window.createWallet = async () => {
-  const w = await DirectSecp256k1HdWallet.generate(24, { prefix: PREFIX }); localSigner = w;
-  $('mnemonic-grid').innerHTML = w.mnemonic.split(' ').map((x,i)=>`<div class="mnemonic-word"><span class="n">${i+1}</span>${x}</div>`).join('');
-  $('mnemonic-confirm').checked = false; $('mnemonic-continue').disabled = true; showModal('mnemonic-modal');
-};
-$('mnemonic-confirm').addEventListener('change', e => { $('mnemonic-continue').disabled = !e.target.checked; });
-window.confirmMnemonicSaved = async () => { closeModal('mnemonic-modal'); const err = $('connect-error');
-  try{ const a = await localSigner.getAccounts(); await activateSigner(localSigner, a[0].address, 'Local wallet', true); }
-  catch(e){ err.textContent='Could not connect to the network: '+(e.message||e); err.style.display='block'; } };
-
-let seedLength = 12;
-window.setSeedLength = n => { seedLength = n; document.querySelectorAll('.seed-toggle button').forEach(b=>b.classList.toggle('active', Number(b.dataset.len)===n)); renderSeedGrid(); };
-function renderSeedGrid(){
-  const grid = $('seed-grid'); const existing = Array.from(grid.querySelectorAll('input')).map(i=>i.value); grid.innerHTML='';
-  for(let i=0;i<seedLength;i++){ const box=document.createElement('div'); box.className='seed-box'; box.innerHTML=`<span class="n">${i+1}</span>`;
-    const inp=document.createElement('input'); inp.type='text'; inp.autocomplete='off'; inp.autocapitalize='off'; inp.spellcheck=false; inp.value=existing[i]||''; box.appendChild(inp); grid.appendChild(box); }
-  grid.querySelectorAll('input').forEach((input,i)=>{
-    input.addEventListener('paste', e => { const text=(e.clipboardData||window.clipboardData).getData('text').trim(); const words=text.split(/\s+/);
-      if(words.length>1){ e.preventDefault(); const inputs=Array.from(grid.querySelectorAll('input')); words.forEach((w,j)=>{ if(inputs[i+j]) inputs[i+j].value=w.toLowerCase(); }); inputs[Math.min(i+words.length, inputs.length-1)].focus(); } });
-    input.addEventListener('keydown', e => { const inputs=Array.from(grid.querySelectorAll('input'));
-      if(e.key===' '||e.key==='Enter'){ e.preventDefault(); if(inputs[i+1]) inputs[i+1].focus(); } else if(e.key==='Backspace' && !input.value && inputs[i-1]) inputs[i-1].focus(); });
-  });
-}
-renderSeedGrid();
-window.importWallet = async () => {
-  const err = $('import-error'); err.style.display='none';
-  const words = Array.from(document.querySelectorAll('#seed-grid input')).map(i=>i.value.trim().toLowerCase());
-  try{ if(words.some(w=>!w)) throw new Error('Fill in all '+seedLength+' words');
-    const w = await DirectSecp256k1HdWallet.fromMnemonic(words.join(' '), { prefix: PREFIX }); localSigner = w; const a = await w.getAccounts(); await activateSigner(w, a[0].address, 'Local wallet', true); }
-  catch(e){ err.textContent='Import failed: '+(e.message||e); err.style.display='block'; }
-};
-
-// ---------- session ----------
-async function activateSigner(signer, address, label, isLocal){
-  signingClient = await SigningStargateClient.connectWithSigner(RPC, signer, { gasPrice: GasPrice.fromString("0.001"+DENOM) });
-  myAddress = address;
-  ['hero-identicon','tb-identicon','sb-identicon'].forEach(id=>drawIdenticon($(id), address));
-  $('my-address').textContent = short(address); $('my-address').title = address;
-  $('tb-addr').textContent = short(address); $('sb-addr').textContent = short(address); $('receive-address').textContent = address;
-  $('conn-label').textContent = label; $('save-device-link').style.display = isLocal?'inline':'none';
-  $('hero-onboard').style.display='none'; $('hero-balance').style.display='flex';
-  $('acct').style.display='flex'; $('sb-wallet').style.display='block'; $('overview-activity-wrap').style.display='block';
-  ['nav-receive','nav-send','nav-activity'].forEach(id=>$(id).classList.remove('locked'));
-  QRCode.toCanvas($('receive-qr'), address, { width: 196, margin: 1, color: { dark:'#07090d', light:'#ffffff' } });
-  switchNav('overview'); cancelReview();
-  await refreshBalance(); await loadActivity();
-}
-window.disconnectWallet = () => {
-  signingClient=null; myAddress=null; localSigner=null; pendingSend=null;
-  $('hero-onboard').style.display='block'; $('hero-balance').style.display='none';
-  $('acct').style.display='none'; $('sb-wallet').style.display='none'; $('overview-activity-wrap').style.display='none';
-  ['nav-receive','nav-send','nav-activity'].forEach(id=>$(id).classList.add('locked'));
-  switchNav('overview'); checkSavedWallet();
-};
-window.copyAddress = () => { if(myAddress) navigator.clipboard.writeText(myAddress); };
-window.refreshBalance = async () => {
-  if(!myAddress) return;
-  try{ const d = await (await fetch(`${REST}/cosmos/bank/v1beta1/balances/${myAddress}`)).json();
-    const bal = (d.balances||[]).find(b=>b.denom===DENOM); const u = bal ? Number(bal.amount) : 0;
-    const el = $('my-balance'); const prev = Number((el.textContent.match(/^[\d,.]+/)||['0'])[0].replace(/,/g,''))||0;
-    animateNumber(el, prev, u/1e6, 600, '<span class="denom">NXRL</span>');
-    $('send-balance-hint').textContent = fmtNxrl(u); $('tb-bal').textContent = fmtNxrl(u)+' NXRL'; $('sb-bal').textContent = fmtNxrl(u)+' NXRL';
-    window.__bal = bal ? BigInt(bal.amount) : 0n;
-  }catch(e){ $('my-balance').textContent='—'; }
-};
-
-// ---------- activity ----------
-async function rpcTxSearch(q, n){ const r = await fetch(`${RPC}tx_search?query=${encodeURIComponent('"'+q+'"')}&order_by=%22desc%22&per_page=${n}`); if(!r.ok) throw 0; return (await r.json()).result?.txs || []; }
-function parseSendTx(tx, me){
-  try{ for(const entry of JSON.parse(tx.tx_result.log)){ const ev = entry.events.find(e=>e.type==='transfer'); if(!ev) continue;
-    const g = k => ev.attributes.find(a=>a.key===k)?.value; const m = (g('amount')||'').match(/^(\d+)unxrl/); if(!m) continue;
-    const out = g('sender')===me, inn = g('recipient')===me; if(!out && !inn) continue;
-    return { hash:tx.hash, height:tx.height, amount:m[1], direction: out?'out':'in', counterparty: out?g('recipient'):g('sender') }; } }catch(e){}
-  return null;
-}
-const upIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
-const dnIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
-function renderTxTable(rows){
-  if(!rows.length) return '<div class="empty">No transactions yet</div>';
-  return `<table class="tx-table"><thead><tr><th>Type</th><th>Counterparty</th><th class="r">Amount</th><th class="r">Block</th></tr></thead><tbody>` +
-    rows.map(t=>`<tr><td><span class="tx-dir"><span class="tx-icon ${t.direction}">${t.direction==='out'?upIcon:dnIcon}</span>${t.direction==='out'?'Sent':'Received'}</span></td><td class="tx-cp">${t.counterparty}</td><td class="r tx-amt ${t.direction}">${t.direction==='out'?'-':'+'}${fmtNxrl(t.amount)} NXRL</td><td class="r tx-h">#${fmt(t.height)}</td></tr>`).join('') + `</tbody></table>`;
-}
-window.loadActivity = async () => {
-  if(!myAddress) return;
-  try{ const [s,r] = await Promise.all([rpcTxSearch(`message.sender='${myAddress}'`,20), rpcTxSearch(`transfer.recipient='${myAddress}'`,20)]);
-    const by = new Map(); [...s,...r].forEach(t=>by.set(t.hash,t));
-    const rows = [...by.values()].map(t=>parseSendTx(t,myAddress)).filter(Boolean).sort((a,b)=>Number(b.height)-Number(a.height));
-    $('activity-list-preview').innerHTML = renderTxTable(rows.slice(0,4)); $('activity-list-send').innerHTML = renderTxTable(rows.slice(0,4)); $('activity-list-full').innerHTML = renderTxTable(rows.slice(0,20));
-  }catch(e){ ['activity-list-preview','activity-list-send','activity-list-full'].forEach(id=>$(id).innerHTML='<div class="empty">Activity unavailable</div>'); }
-};
-
-// ---------- send ----------
-window.setMax = () => { const b = window.__bal||0n; if(b===0n) return; const sp = b>50000n ? b-50000n : 0n;
-  $('send-amount').value = `${sp/1000000n}.${(sp%1000000n).toString().padStart(6,'0')}`.replace(/\.?0+$/,'')||'0'; };
-window.reviewSend = async () => {
-  const st = $('send-status'), btn = $('review-btn'); st.style.display='none';
-  const to = $('send-to').value.trim(), amountStr = $('send-amount').value.trim(), memo = $('send-memo').value.trim();
-  try{ if(!to.startsWith('nxr1')) throw new Error('Recipient must be a valid nxr1... address'); if(!signingClient||!myAddress) throw new Error('Wallet not connected');
-    const amt = nxrlToUnxrl(amountStr); btn.disabled=true; btn.textContent='Estimating fee…';
-    const msg = { typeUrl:"/cosmos.bank.v1beta1.MsgSend", value:{ fromAddress:myAddress, toAddress:to, amount:[{denom:DENOM, amount:amt.toString()}] } };
-    const gas = await signingClient.simulate(myAddress, [msg], memo); const fee = calculateFee(Math.round(gas*1.4), GasPrice.fromString("0.001"+DENOM));
-    pendingSend = { to, amt, memo, fee, msg };
-    $('rv-from').textContent=myAddress; $('rv-to').textContent=to; $('rv-amount').textContent=fmtNxrl(amt.toString())+' NXRL'; $('rv-fee').textContent=fmtNxrl(fee.amount[0].amount)+' NXRL';
-    $('rv-memo-row').style.display = memo?'flex':'none'; $('rv-memo').textContent = memo;
-    $('send-form-step').style.display='none'; $('send-review-step').style.display='block';
-  }catch(e){ st.className='status-box bad'; st.textContent='Failed: '+(e.message||e); st.style.display='block'; }
-  finally{ btn.disabled=false; btn.textContent='Review transfer'; }
-};
-window.cancelReview = () => { pendingSend=null; $('send-form-step').style.display='block'; $('send-review-step').style.display='none'; $('confirm-status').style.display='none'; };
-window.confirmSend = async () => {
-  const st = $('confirm-status'), btn = $('confirm-send-btn'); if(!pendingSend) return;
-  try{ btn.disabled=true; st.className='status-box pending'; st.textContent='Broadcasting…'; st.style.display='block';
-    const { msg, fee, memo } = pendingSend; const res = await signingClient.signAndBroadcast(myAddress, [msg], fee, memo);
-    if(res.code && res.code!==0) throw new Error('Tx failed on-chain (code '+res.code+'): '+(res.rawLog||''));
-    st.className='status-box ok'; st.innerHTML='Sent in block #'+fmt(res.height)+'. Tx <span class="mono">'+res.transactionHash+'</span>';
-    $('send-amount').value=''; $('send-memo').value=''; $('send-to').value=''; pendingSend=null; await refreshBalance(); await loadActivity();
-  }catch(e){ st.className='status-box bad'; st.textContent='Failed: '+(e.message||e); }
-  finally{ btn.disabled=false; }
-};
-
-// ---------- encrypted device vault ----------
-async function deriveKey(pass, salt){ const km = await crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']);
-  return crypto.subtle.deriveKey({ name:'PBKDF2', salt, iterations:200000, hash:'SHA-256' }, km, { name:'AES-GCM', length:256 }, false, ['encrypt','decrypt']); }
-const b64 = b => btoa(String.fromCharCode(...b)); const unb64 = s => Uint8Array.from(atob(s), c=>c.charCodeAt(0));
-window.offerSaveToDevice = () => { $('save-device-error').style.display='none'; $('save-passphrase').value=''; showModal('save-device-modal'); };
-window.confirmSaveToDevice = async () => {
-  const err = $('save-device-error'), pass = $('save-passphrase').value;
-  if(!pass || pass.length<6){ err.textContent='Use a passphrase of at least 6 characters.'; err.style.display='block'; return; }
-  try{ const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12)); const key = await deriveKey(pass, salt);
-    const ct = await crypto.subtle.encrypt({ name:'AES-GCM', iv }, key, new TextEncoder().encode(localSigner.mnemonic));
-    localStorage.setItem(VAULT_KEY, JSON.stringify({ salt:b64(salt), iv:b64(iv), data:b64(new Uint8Array(ct)) }));
-    closeModal('save-device-modal'); $('save-device-link').textContent='Saved to this device ✓'; $('save-device-link').disabled=true;
-  }catch(e){ err.textContent='Failed to save: '+(e.message||e); err.style.display='block'; }
-};
-function checkSavedWallet(){ $('saved-wallet-row').style.display = localStorage.getItem(VAULT_KEY) ? 'block' : 'none'; }
-window.openUnlockModal = () => { $('unlock-error').style.display='none'; $('unlock-passphrase').value=''; showModal('unlock-modal'); };
-window.confirmUnlock = async () => {
-  const err = $('unlock-error'), pass = $('unlock-passphrase').value;
-  try{ const raw = localStorage.getItem(VAULT_KEY); if(!raw) throw 0; const v = JSON.parse(raw); const key = await deriveKey(pass, unb64(v.salt));
-    const mnemonic = new TextDecoder().decode(await crypto.subtle.decrypt({ name:'AES-GCM', iv:unb64(v.iv) }, key, unb64(v.data)));
-    const w = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: PREFIX }); localSigner = w; const a = await w.getAccounts(); closeModal('unlock-modal');
-    await activateSigner(w, a[0].address, 'Local wallet', true); $('save-device-link').textContent='Saved to this device ✓'; $('save-device-link').disabled=true;
-  }catch(e){ err.textContent='Wrong passphrase or corrupted data.'; err.style.display='block'; }
-};
-window.forgetDevice = () => { if(confirm('Remove the encrypted wallet saved in this browser? Make sure you have your recovery phrase saved elsewhere.')){ localStorage.removeItem(VAULT_KEY); closeModal('unlock-modal'); checkSavedWallet(); } };
-checkSavedWallet();
-</script>
 </body>
 </html>
