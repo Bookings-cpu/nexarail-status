@@ -697,7 +697,7 @@ function route(){
   if (NEEDS_WALLET.includes(nav) && !S.addr){ nav = "overview"; if (location.hash.length > 2 && !location.hash.startsWith("#/overview")) history.replaceState(null, "", "#/overview"); }
   document.querySelectorAll("[data-nav]").forEach(t => t.classList.toggle("active", t.dataset.nav === nav && (t.classList.contains("navitem") || !!t.closest(".bottomnav"))));
   VIEWS.forEach(n => $("view-" + n).style.display = n === nav ? "block" : "none");
-  $("view-" + nav).querySelectorAll(".rise").forEach(c => { c.style.animation = "none"; void c.offsetWidth; c.style.animation = ""; });
+  $("view-" + nav).querySelectorAll(".rise").forEach(c => { c.style.animationName = "none"; void c.offsetWidth; c.style.animationName = ""; });   // keeps each card's stagger delay
   if (nav === "send") cancelReview();
   if (nav === "activity") loadActivity();
   if (nav === "staking") refreshAccount();
